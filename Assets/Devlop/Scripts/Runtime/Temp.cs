@@ -1,51 +1,67 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using Cofdream.DotNetLibrary;
 
 namespace Cofdream.Runtime
 {
     public class Temp : MonoBehaviour
     {
-        public Text Text;
-        public Text Text2;
+        public Item[] Item;
 
-        // Start is called before the first frame update
+
         void Start()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            StringBuilder stringBuilder2 = new StringBuilder();
+            DotNetUtility.Log = UnityEngine.Debug.Log;
 
-            stringBuilder.AppendLine("½ø³Ì:  ");
-            stringBuilder2.AppendLine("½ø³ÌID:  ");
+            int index = 0;
+            Item[index++].StringBuilder.AppendLine("è¿›ç¨‹å");
+            //Item[index++].StringBuilder.AppendLine("Modules");
+            Item[index++].StringBuilder.AppendLine("è¿›ç¨‹ID");
+            Item[index++].StringBuilder.AppendLine("å‘½ä»¤è¡Œå‚æ•°");
 
-            var processes = Process.GetProcesses();// »ñÈ¡±¾µØ¼ÆËã»úÉÏµÄ½ø³Ì
+            var processes = Process.GetProcesses();// è·å–æœ¬åœ°è®¡ç®—æœºä¸Šçš„è¿›ç¨‹
             foreach (var item in processes)
             {
                 if (item != null)
                 {
-                    if (item.ProcessName.Contains("Unity"))
+                    try
                     {
-                        stringBuilder.Append(item.ProcessName);
-                        stringBuilder.AppendLine();
+                        if (item.ProcessName.Contains("Unity"))
+                        {
+                            try
+                            {
+                                int i = 0;
+                                Item[i++].StringBuilder.AppendLine(item.ProcessName);
+                                //Item[i++].StringBuilder.AppendLine(item.Modules.Count.ToString());
+                                Item[i++].StringBuilder.AppendLine(item.Id.ToString());
 
-                        
-                        stringBuilder2.Append(item.Id);
-                        stringBuilder2.AppendLine();
+                                Item[i++].StringBuilder.AppendLine(DotNetUtility.GetCommandLineArgs(item));
+
+                            }
+                            catch (System.Exception e)
+                            {
+
+                                UnityEngine.Debug.Log(e);
+                            }
+                        }
                     }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.Log(e);
+                    }
+                    
                 }
             }
 
-            Text.text = stringBuilder.ToString();
-            Text2.text = stringBuilder2.ToString();
-            
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
+            foreach (var item in Item)
+            {
+                item.RefreshView();
+            }
 
         }
     }
