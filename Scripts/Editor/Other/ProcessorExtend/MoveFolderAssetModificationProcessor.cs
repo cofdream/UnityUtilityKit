@@ -13,37 +13,40 @@ namespace Cofdream.ToolKitEditor
         private const string MoveScriptsTipEdiotrKey = "Cofdream_Key_Move_Scirpts_Tip";
         private static AssetMoveResult OnWillMoveAsset(string sourcePath, string destinationPath)
         {
-            AssetMoveResult assetMoveResult = AssetMoveResult.DidNotMove;
+            // 先屏蔽下，todo 后面在开发相关功能
+            return AssetMoveResult.DidNotMove;
 
-            if (ReloadAssembliesSetting.LockReloadAssemblies) return assetMoveResult;
+            //AssetMoveResult assetMoveResult = AssetMoveResult.DidNotMove;
 
-            bool isTip = false;
-            if (AssetDatabase.IsValidFolder(sourcePath))
-            {
-                isTip = AssetDatabase.FindAssets("t:Script", new string[] { sourcePath }).Length != 0;
-            }
-            else
-            {
-                if (sourcePath.EndsWith(".cs"))
-                {
-                    //只是改了文件名
-                    if (Directory.GetParent(sourcePath).FullName != Directory.GetParent(destinationPath).FullName)
-                    {
-                        isTip = true;
-                    }
-                }
-            }
+            //if (ReloadAssembliesSetting.LockReloadAssemblies) return assetMoveResult;
 
-            if (isTip)
-            {
-                if (EditorUtility.DisplayDialog("Move Scirpts Tip", $"Source path exist Scripts. Do you want move?\n\nSource path: {sourcePath}\nDestination path: {destinationPath}", "Yes Move", "No"
-                    , DialogOptOutDecisionType.ForThisSession, MoveScriptsTipEdiotrKey) == false)
-                {
-                    assetMoveResult = AssetMoveResult.FailedMove;
-                }
-            }
+            //bool isTip = false;
+            //if (AssetDatabase.IsValidFolder(sourcePath))
+            //{
+            //    isTip = AssetDatabase.FindAssets("t:Script", new string[] { sourcePath }).Length != 0;
+            //}
+            //else
+            //{
+            //    if (sourcePath.EndsWith(".cs"))
+            //    {
+            //        //只是改了文件名
+            //        if (Directory.GetParent(sourcePath).FullName != Directory.GetParent(destinationPath).FullName)
+            //        {
+            //            isTip = true;
+            //        }
+            //    }
+            //}
 
-            return assetMoveResult;
+            //if (isTip)
+            //{
+            //    if (EditorUtility.DisplayDialog("Move Folder Tip", $"Source path exist Scripts. Do you want move?\n\nSource path: {sourcePath}\nDestination path: {destinationPath}", "Yes Move", "No"
+            //        , DialogOptOutDecisionType.ForThisSession, MoveScriptsTipEdiotrKey) == false)
+            //    {
+            //        assetMoveResult = AssetMoveResult.FailedMove;
+            //    }
+            //}
+
+            //return assetMoveResult;
         }
     }
     // todo 尝试对不同文件的移动做 监听处理
