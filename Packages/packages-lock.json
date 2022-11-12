@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.e7.modify-editor-style": {
+      "version": "https://github.com/5argon/ModifyEditorStyle.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "1fa5ecb4bc930f82d0916844defcd5bc90839355"
+    },
     "com.mischief.markdownviewer": {
       "version": "https://github.com/gwaredd/UnityMarkdownViewer.git",
       "depth": 0,
