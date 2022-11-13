@@ -1,9 +1,7 @@
 {
-    "name": "Cofdream.Runtime",
-    "rootNamespace": "Cofdream.Runtime",
-    "references": [
-        "GUID:56bcd5ce251e5d74cb65f3f3de9d31c0"
-    ],
+    "name": "Cofdream.Net",
+    "rootNamespace": "Cofdream.Net",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
