@@ -8,7 +8,7 @@ namespace Cofdream.ToolKitEditor
 {
     public class ToolKitWindow : EditorWindowPlus
     {
-        [MenuItem(MenuItemUtil.ToolKit + "UtilityWindow", false, 1)]
+        [MenuItem(MenuItemUtil.ToolKit + "ToolKitWindow", false, 1)]
         private static void OpenWindow()
         {
             GetWindow<ToolKitWindow>("工具").Show();
@@ -46,7 +46,7 @@ namespace Cofdream.ToolKitEditor
                 for (int i = 0; i < _toolData.SceneDatas.Count; i++)
                 {
                     var sceneData = _toolData.SceneDatas[i];
-                    if (GUILayout.Button(new GUIContent($"Open {sceneData.SceneName}", _scemeAssetIcon, AssetDatabase.GetAssetPath(sceneData.SceneAsset)), GUILayout.Height(22), GUILayout.Width((sceneData.SceneName.Length + 6) * 8 + 10)))
+                    if (GUILayout.Button(new GUIContent(sceneData.SceneName, _scemeAssetIcon, $"Open Scene:{AssetDatabase.GetAssetPath(sceneData.SceneAsset)}"), GUILayout.Height(22), GUILayout.Width((sceneData.SceneName.Length + 6) * 8 + 10)))
                     {
                         // 播放状态检查
                         if (EditorApplication.isPlayingOrWillChangePlaymode)
