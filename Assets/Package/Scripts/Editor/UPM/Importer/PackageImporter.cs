@@ -1,7 +1,11 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor.AssetImporters;
 using System.IO;
+#if UNITY_2020_3_OR_NEWER
+using UnityEditor.AssetImporters;
+#else
+using UnityEditor.Experimental.AssetImporters;
+#endif
 
 namespace Cofdream.ToolKitEditor.UPM
 {
