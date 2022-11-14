@@ -15,9 +15,12 @@ MonoBehaviour:
   packageManifest: {fileID: -6750239444755058063, guid: dd1132c4cb760e347b96af378f2cf07d,
     type: 3}
   commands:
-  - State: 1
+  - State: 0
     Name: "\u66F4\u65B0UPM\u5206\u652F"
     Command: git subtree split --rejoin --prefix=#PackagePath# --branch upm
+  - State: 1
+    Name: "\u66F4\u65B0UPM\u5206\u652F"
+    Command: git subtree split --prefix=#PackagePath# --branch upm
   - State: 1
     Name: "\u63D0\u4EA4\u4FEE\u6539"
     Command: git push origin upm
