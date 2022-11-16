@@ -27,14 +27,14 @@ namespace Cofdream.ToolKitEditor
             }
         }
 
-        private ToolData _toolData;
+        [SerializeField] private ToolData _toolData;
 
-        public int _sceneAssetIconSize;
+        [SerializeField] public int _sceneAssetIconSize;
         private Texture2D _sceneAssetIcon;
 
         private string _projectInfoPath = @"C:\Users\chen\Desktop\ProjectInfo\ProjectInfo.json";
-        private bool _isDisplayOpenProjectTool;
-        private ProjectInfoGroup _projectInfoGroup;
+        [SerializeField] private bool _isDisplayOpenProjectTool;
+        [SerializeField] private ProjectInfoGroup _projectInfoGroup;
 
         private void OnEnable()
         {
@@ -58,7 +58,7 @@ namespace Cofdream.ToolKitEditor
 
             // SceneAsset
             _sceneAssetIcon = EditorGUIUtility.Load("SceneAsset Icon") as Texture2D;//EditorGUIUtility.FindTexture("SceneAsset Icon");
-            _sceneAssetIconSize = 15;
+            _sceneAssetIconSize = _sceneAssetIconSize == 0 ? 15 : _sceneAssetIconSize;
 
 
             // Project
@@ -102,11 +102,15 @@ namespace Cofdream.ToolKitEditor
             var ProjectInfoString = File.ReadAllText(_projectInfoPath);
 
             _projectInfoGroup = ScriptableObject.CreateInstance<ProjectInfoGroup>();
-            _projectInfoGroup.ProjectGroups = new ProjectGroup[0];
-            _projectInfoGroup.ProjectInfos = new ProjectInfo[0];
 
             EditorJsonUtility.FromJsonOverwrite(ProjectInfoString, _projectInfoGroup);
             //_projectInfoGroup = JsonUtility.FromJson<ProjectInfoGroup>(ProjectInfoString);
+
+        }
+
+        private void OnDisable()
+        {
+            SaveProjectInfoGroup();
         }
 
         private void OnGUI()
@@ -189,7 +193,22 @@ namespace Cofdream.ToolKitEditor
                                         GUI.contentColor = Color.cyan;
                                         if (GUILayout.Button($"Close: {item.Name} PId: {item.ProcessId}", GUILayout.Width(200)))
                                         {
-                                            process.Kill();
+                                            if (process.HasExited == false)
+                                            {
+                                                try
+                                                {
+                                                    process.Kill();
+                                                }
+                                                catch (System.Exception e)
+                                                {
+                                                    UnityEngine.Debug.LogError(e);
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                EditorUtility.DisplayDialog("Tips!", $"进程已经被其他方式给退出了！！\n分组: {projectInfoGroups.Key.Name}\n工程: {item.Name} 进程Id: {item.ProcessId}", "OK");
+                                            }
 
                                             item.ProcessId = 0;
                                             SaveProjectInfoGroup();
@@ -206,7 +225,12 @@ namespace Cofdream.ToolKitEditor
             }
             EditorGUILayout.EndVertical();
 
+        }
 
+        private void OnFocus()
+        {
+            var ProjectInfoString = File.ReadAllText(_projectInfoPath);
+            EditorJsonUtility.FromJsonOverwrite(ProjectInfoString, _projectInfoGroup);
         }
 
         private void OpenProject(ProjectInfo projectInfo)
@@ -230,6 +254,8 @@ namespace Cofdream.ToolKitEditor
 
                 process.WaitForExit();
                 process.Close();
+
+                projectInfo.ProcessId = 0;
             });
 
             thread.Start();
