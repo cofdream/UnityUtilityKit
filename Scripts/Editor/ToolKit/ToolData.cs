@@ -13,8 +13,6 @@ namespace Cofdream.ToolKitEditor
         {
             if (SceneDatas == null)
                 SceneDatas = new List<SceneData>();
-
-            Debug.Log("ToolData OnEnable done.");
         }
 
         public void OnValidate()
@@ -36,4 +34,67 @@ namespace Cofdream.ToolKitEditor
         public SceneAsset SceneAsset;
     }
 
+
+    [System.Serializable]
+    public class ProjectGroup
+    {
+        public string Name;
+        public int Count;
+    }
+    [System.Serializable]
+    public class ProjectInfo
+    {
+        public string Name;
+        public string Path;
+        public string CommandLine;
+        public string UnityEnginePath;
+        public int ProcessId;
+    }
+
+    [System.Serializable]
+    public class ProjectInfoGroup : ScriptableObject
+    {
+        public ProjectGroup[] ProjectGroups;
+        public ProjectInfo[] ProjectInfos;
+
+        [System.NonSerialized]
+        private Dictionary<ProjectGroup, ProjectInfo[]> _projectInfoGroups;
+
+        public Dictionary<ProjectGroup, ProjectInfo[]> ProjectInfoGroups
+        {
+            get
+            {
+                if (_projectInfoGroups == null && ProjectGroups != null && ProjectInfos != null)
+                {
+                    _projectInfoGroups = new Dictionary<ProjectGroup, ProjectInfo[]>(ProjectGroups.Length);
+                    int index = 0;
+                    foreach (var item in ProjectGroups)
+                    {
+                        var infos = new ProjectInfo[item.Count];
+                        for (int i = 0; i < item.Count; i++)
+                        {
+                            if (index < ProjectInfos.Length)
+                            {
+                                infos[i] = ProjectInfos[index++];
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        if (index <= ProjectInfos.Length)
+                        {
+                            _projectInfoGroups.Add(item, infos);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                return _projectInfoGroups;
+            }
+        }
+    }
 }
