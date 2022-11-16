@@ -227,12 +227,6 @@ namespace Cofdream.ToolKitEditor
 
         }
 
-        private void OnFocus()
-        {
-            var ProjectInfoString = File.ReadAllText(_projectInfoPath);
-            EditorJsonUtility.FromJsonOverwrite(ProjectInfoString, _projectInfoGroup);
-        }
-
         private void OpenProject(ProjectInfo projectInfo)
         {
             Thread thread = new Thread((obj) =>
