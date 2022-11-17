@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Cofdream.ToolKitEditor
 {
+    // Single Data
+
     public class ToolData : ScriptableObject
     {
         public List<SceneData> SceneDatas;
@@ -26,6 +28,8 @@ namespace Cofdream.ToolKitEditor
             }
         }
     }
+
+    // Share Data
 
     [System.Serializable]
     public class SceneData
@@ -64,36 +68,80 @@ namespace Cofdream.ToolKitEditor
         {
             get
             {
-                if (_projectInfoGroups == null && ProjectGroups != null && ProjectInfos != null)
+                //if (_projectInfoGroups == null && ProjectGroups != null && ProjectInfos != null)
+                //{
+                //    _projectInfoGroups = new Dictionary<ProjectGroup, ProjectInfo[]>(ProjectGroups.Length);
+                //    int index = 0;
+                //    foreach (var item in ProjectGroups)
+                //    {
+                //        var infos = new ProjectInfo[item.Count];
+                //        for (int i = 0; i < item.Count; i++)
+                //        {
+                //            if (index < ProjectInfos.Length)
+                //            {
+                //                infos[i] = ProjectInfos[index++];
+                //            }
+                //            else
+                //            {
+                //                break;
+                //            }
+                //        }
+                //        if (index <= ProjectInfos.Length)
+                //        {
+                //            _projectInfoGroups.Add(item, infos);
+                //        }
+                //        else
+                //        {
+                //            break;
+                //        }
+                //    }
+                //}
+
+                return _projectInfoGroups;
+            }
+        }
+
+        private void OnEnable()
+        {
+            if (ProjectGroups == null)
+                ProjectGroups = new ProjectGroup[0];
+
+            if (ProjectInfos == null)
+                ProjectInfos = new ProjectInfo[0];
+
+            if (_projectInfoGroups == null)
+                _projectInfoGroups = new Dictionary<ProjectGroup, ProjectInfo[]>();
+        }
+
+        private void OnValidate()
+        {
+            if (_projectInfoGroups.Count != ProjectGroups.Length)
+            {
+                _projectInfoGroups = new Dictionary<ProjectGroup, ProjectInfo[]>(ProjectGroups.Length);
+                int index = 0;
+                foreach (var item in ProjectGroups)
                 {
-                    _projectInfoGroups = new Dictionary<ProjectGroup, ProjectInfo[]>(ProjectGroups.Length);
-                    int index = 0;
-                    foreach (var item in ProjectGroups)
+                    var infos = new ProjectInfo[item.Count];
+                    for (int i = 0; i < item.Count; i++)
                     {
-                        var infos = new ProjectInfo[item.Count];
-                        for (int i = 0; i < item.Count; i++)
+                        if (index < ProjectInfos.Length)
                         {
-                            if (index < ProjectInfos.Length)
-                            {
-                                infos[i] = ProjectInfos[index++];
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        if (index <= ProjectInfos.Length)
-                        {
-                            _projectInfoGroups.Add(item, infos);
+                            infos[i] = ProjectInfos[index++];
                         }
                         else
                         {
                             break;
                         }
                     }
+                    if (index <= ProjectInfos.Length)
+                    {
+                        _projectInfoGroups.Add(item, infos);
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-
-                return _projectInfoGroups;
             }
         }
     }
