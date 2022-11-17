@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Cofdream.ToolKitEditor
 {
-    public class CustomAssetModificationProcessor
+    public partial class CustomAssetModificationProcessor
 #if UNITY_2019_OR_NEWER
         : UnityEditor.AssetModificationProcessor
 #else
@@ -152,4 +152,66 @@ namespace Cofdream.ToolKitEditor
             return Directory.GetParent(sourcePath).FullName.Equals(Directory.GetParent(destinationPath).FullName);
         }
     }
+#if UNITY_2020_3_OR_NEWER
+    public partial class CustomAssetModificationProcessor
+    {
+        [System.Obsolete("Use AssetDatabase.SaveAssetIfDirty(GUID guid)", true)]
+        public static void SaveAssetIfDirty(GUID guid) { }
+
+        [System.Obsolete("Use AssetDatabase.SaveAssetIfDirty(UnityEngine.Object obj)", true)]
+        public static void SaveAssetIfDirty(UnityEngine.Object obj) { }
+    }
+#else
+    public partial class CustomAssetModificationProcessor
+    {
+        private static System.Collections.Generic.List<string> _saveAssetPaths = new System.Collections.Generic.List<string>();
+
+        public static void SaveAssetIfDirty(GUID guid)
+        {
+            try
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+                if (EditorUtility.IsDirty(asset))
+                {
+                    _saveAssetPaths.Add(path);
+                    AssetDatabase.SaveAssets();
+                }
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogError(e);
+            }
+
+        }
+
+        public static void SaveAssetIfDirty(UnityEngine.Object obj)
+        {
+            try
+            {
+                if (EditorUtility.IsDirty(obj))
+                {
+                    var path = AssetDatabase.GetAssetPath(obj);
+                    _saveAssetPaths.Add(path);
+                    AssetDatabase.SaveAssets();
+                }
+
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogError(e);
+            }
+        }
+
+        private static string[] OnWillSaveAssets(string[] paths)
+        {
+            if (_saveAssetPaths.Count > 0)
+            {
+                paths = _saveAssetPaths.ToArray();
+                _saveAssetPaths.Clear();
+            }
+            return paths;
+        }
+    }
+#endif
 }
