@@ -27,26 +27,41 @@ namespace Cofdream.ToolKitEditor
             }
         }
 
+
+        private string _singleRootPath;
+        private string _shareRootPath;
+
+
         [SerializeField] private ToolData _toolData;
 
         [SerializeField] public int _sceneAssetIconSize;
         private Texture2D _sceneAssetIcon;
 
-        private string _projectInfoPath = @"C:\Users\chen\Desktop\ProjectInfo\ProjectInfo.json";
         [SerializeField] private bool _isDisplayOpenProjectTool;
         [SerializeField] private ProjectInfoGroup _projectInfoGroup;
 
         private void OnEnable()
         {
-            // Data
-            var rootPath = "Assets/_A_WorkData";
-            if (AssetDatabase.IsValidFolder(rootPath) == false)
+            UnityEngine.Debug.Log();
+
+            //path
+            _singleRootPath = "Assets/_A_WorkData";
+            if (AssetDatabase.IsValidFolder(_singleRootPath) == false)
             {
                 AssetDatabase.CreateFolder("Assets", "_A_WorkData");
-                AssetDatabase.ImportAsset(rootPath);
+                AssetDatabase.ImportAsset(_singleRootPath);
+            }
+            _shareRootPath = Utils.GetPackageRootPath() + "/PackageDatas";
+            if (AssetDatabase.IsValidFolder(_shareRootPath) == false)
+            {
+              var folder =  AssetDatabase.CreateFolder(Utils.GetPackageRootPath(), "PackageDatas");
+                UnityEngine.Debug.Log(folder);
+                AssetDatabase.ImportAsset(_shareRootPath);
             }
 
-            var toolDataPath = rootPath + "/ToolData.asset";
+
+            // ToolData
+            var toolDataPath = _singleRootPath + "/ToolData.asset";
             _toolData = AssetDatabase.LoadAssetAtPath<ToolData>(toolDataPath);
             if (_toolData == null)
             {
@@ -62,55 +77,17 @@ namespace Cofdream.ToolKitEditor
 
 
             // Project
-            Directory.CreateDirectory(Directory.GetParent(_projectInfoPath).FullName);
-
-            if (File.Exists(_projectInfoPath) == false)
+            var projectInfoGroupPath = _shareRootPath + "/ProjectInfoGroup.asset";
+            _projectInfoGroup = AssetDatabase.LoadAssetAtPath<ProjectInfoGroup>(projectInfoGroupPath);
+            if (_projectInfoGroup == null)
             {
-                var projectInfoGroup = ScriptableObject.CreateInstance<ProjectInfoGroup>();
-                projectInfoGroup.ProjectGroups = new ProjectGroup[] {
-                    new ProjectGroup()
-                    {
-                        Name = "GroupName",
-                        Count = 1,
-                    },
-                    new ProjectGroup()
-                    {
-                        Name = "GroupName2",
-                        Count = 1,
-                    },
-                };
-                projectInfoGroup.ProjectInfos = new ProjectInfo[] {
-                    new ProjectInfo()
-                    {
-                        Name = "ProjectName",
-                        Path = "ProjectPath",
-                        CommandLine = "",
-                        UnityEnginePath = "",
-                    },
-                    new ProjectInfo()
-                    {
-                        Name = "ProjectName2",
-                        Path = "ProjectPath2",
-                        CommandLine = "",
-                        UnityEnginePath = "",
-                    },
-                };
-
-                File.WriteAllText(_projectInfoPath, EditorJsonUtility.ToJson(projectInfoGroup, true));
+                _projectInfoGroup = CreateInstance<ProjectInfoGroup>();
+                AssetDatabase.CreateAsset(_projectInfoGroup, projectInfoGroupPath);
+                AssetDatabase.ImportAsset(projectInfoGroupPath);
             }
 
-            var ProjectInfoString = File.ReadAllText(_projectInfoPath);
 
-            _projectInfoGroup = ScriptableObject.CreateInstance<ProjectInfoGroup>();
-
-            EditorJsonUtility.FromJsonOverwrite(ProjectInfoString, _projectInfoGroup);
-            //_projectInfoGroup = JsonUtility.FromJson<ProjectInfoGroup>(ProjectInfoString);
-
-        }
-
-        private void OnDisable()
-        {
-            SaveProjectInfoGroup();
+            AssetDatabase.ImportAsset(projectInfoGroupPath,ImportAssetOptions.ForceUpdate);
         }
 
         private void OnGUI()
@@ -176,7 +153,6 @@ namespace Cofdream.ToolKitEditor
                                     catch (System.Exception e)
                                     {
                                         item.ProcessId = 0;
-                                        SaveProjectInfoGroup();
                                         UnityEngine.Debug.LogError(e);
                                     }
 
@@ -211,7 +187,6 @@ namespace Cofdream.ToolKitEditor
                                             }
 
                                             item.ProcessId = 0;
-                                            SaveProjectInfoGroup();
                                         }
                                         GUI.contentColor = color;
                                     }
@@ -255,9 +230,6 @@ namespace Cofdream.ToolKitEditor
             thread.Start();
         }
 
-        private void SaveProjectInfoGroup()
-        {
-            File.WriteAllText(_projectInfoPath, EditorJsonUtility.ToJson(_projectInfoGroup, true));
-        }
+
     }
 }
