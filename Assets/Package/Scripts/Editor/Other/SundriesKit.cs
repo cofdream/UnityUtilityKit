@@ -41,5 +41,11 @@ namespace Cofdream.ToolKitEditor
             EditorApplication.EnterPlaymode();
         }
 
+        [MenuItem(HEAD + "Resources.UnloadUnusedAssets")]
+        private static void UnloadUnusedAssets()
+        {
+            Resources.UnloadUnusedAssets();
+        }
+
     }
 }
