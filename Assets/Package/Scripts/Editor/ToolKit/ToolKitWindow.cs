@@ -42,8 +42,6 @@ namespace Cofdream.ToolKitEditor
 
         private void OnEnable()
         {
-            UnityEngine.Debug.Log();
-
             //path
             _singleRootPath = "Assets/_A_WorkData";
             if (AssetDatabase.IsValidFolder(_singleRootPath) == false)
