@@ -90,13 +90,13 @@ namespace Cofdream.ToolKitEditor
                 if (IsReName())
                 {
                     title = "Folder Rename Tip!";
-                    message = $"Do you want to rename the folder.?\n\n" + $"Source: {sourcePath}\nTarget: {destinationPath}";
+                    message = $"Do you want to rename the folder?\n\n" + $"Source: {Path.GetFileName(sourcePath)}\nTarget: {Path.GetFileName(destinationPath)}";
                     isMove = EditorUtility.DisplayDialog(title, message, "Yes Rename", "Cancel");
                 }
                 else
                 {
                     title = "Folder Move Tip!";
-                    message = $"Do you want to move the folder.?\n\n" + $"Source: {sourcePath}\nTarget: {destinationPath}";
+                    message = $"Do you want to move the folder?\n\n" + $"Source: {sourcePath}\nTarget: {destinationPath}";
                     isMove = EditorUtility.DisplayDialog(title, message, "Yes Move", "Cancel");
                 }
 
@@ -123,13 +123,13 @@ namespace Cofdream.ToolKitEditor
                 if (IsReName())
                 {
                     title = "File Rename Tip!";
-                    message = $"Do you want to rename the file.?\n\n" + $"Source: {sourcePath}\nTarget: {destinationPath}";
+                    message = $"Do you want to rename the file?\n\n" + $"Source: {Path.GetFileName(sourcePath)}\nTarget: {Path.GetFileName(destinationPath)}";
                     isMove = EditorUtility.DisplayDialog(title, message, "Yes Rename", "Cancel");
                 }
                 else
                 {
                     title = "File Move Tip!";
-                    message = $"Do you want to move the file.?\n\n" + $"Source: {sourcePath}\nTarget: {destinationPath}";
+                    message = $"Do you want to move the file?\n\n" + $"Source: {sourcePath}\nTarget: {destinationPath}";
                     isMove = EditorUtility.DisplayDialog(title, message, "Yes Move", "Cancel");
                 }
 
