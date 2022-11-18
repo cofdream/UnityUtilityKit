@@ -166,7 +166,7 @@ namespace Cofdream.ToolKitEditor
     {
         private static System.Collections.Generic.List<string> _saveAssetPaths = new System.Collections.Generic.List<string>();
 
-        public static void SaveAssetIfDirty(GUID guid)
+        public static void SaveAssetIfDirty(string guid)
         {
             try
             {
