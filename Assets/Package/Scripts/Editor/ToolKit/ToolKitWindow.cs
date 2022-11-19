@@ -29,7 +29,6 @@ namespace Cofdream.ToolKitEditor
 
 
         private string _singleRootPath;
-        private string _shareRootPath;
 
 
         [SerializeField] private ToolData _toolData;
@@ -48,13 +47,6 @@ namespace Cofdream.ToolKitEditor
             {
                 AssetDatabase.CreateFolder("Assets", "_A_WorkData");
                 AssetDatabase.ImportAsset(_singleRootPath);
-            }
-            _shareRootPath = Utils.GetPackageRootPath() + "/PackageDatas";
-            if (AssetDatabase.IsValidFolder(_shareRootPath) == false)
-            {
-              var folder =  AssetDatabase.CreateFolder(Utils.GetPackageRootPath(), "PackageDatas");
-                UnityEngine.Debug.Log(folder);
-                AssetDatabase.ImportAsset(_shareRootPath);
             }
 
 
@@ -75,7 +67,7 @@ namespace Cofdream.ToolKitEditor
 
 
             // Project
-            var projectInfoGroupPath = _shareRootPath + "/ProjectInfoGroup.asset";
+            var projectInfoGroupPath = _singleRootPath + "/ProjectInfoGroup.asset";
             _projectInfoGroup = AssetDatabase.LoadAssetAtPath<ProjectInfoGroup>(projectInfoGroupPath);
             if (_projectInfoGroup == null)
             {
@@ -83,14 +75,10 @@ namespace Cofdream.ToolKitEditor
                 AssetDatabase.CreateAsset(_projectInfoGroup, projectInfoGroupPath);
                 AssetDatabase.ImportAsset(projectInfoGroupPath);
             }
-
-
-            AssetDatabase.ImportAsset(projectInfoGroupPath,ImportAssetOptions.ForceUpdate);
         }
 
         private void OnGUI()
         {
-
             _sceneAssetIconSize = EditorGUILayout.IntField("Scene Asset Icon Size:", _sceneAssetIconSize);
 
             EditorGUILayout.BeginHorizontal();
@@ -130,7 +118,6 @@ namespace Cofdream.ToolKitEditor
                 {
                     if (_isDisplayOpenProjectTool)
                     {
-
                         foreach (var projectInfoGroups in _projectInfoGroup.ProjectInfoGroups)
                         {
                             EditorGUILayout.LabelField(projectInfoGroups.Key.Name);
@@ -151,6 +138,7 @@ namespace Cofdream.ToolKitEditor
                                     catch (System.Exception e)
                                     {
                                         item.ProcessId = 0;
+
                                         UnityEngine.Debug.LogError(e);
                                     }
 
@@ -177,7 +165,6 @@ namespace Cofdream.ToolKitEditor
                                                 {
                                                     UnityEngine.Debug.LogError(e);
                                                 }
-
                                             }
                                             else
                                             {
@@ -197,6 +184,7 @@ namespace Cofdream.ToolKitEditor
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
             EditorGUILayout.EndVertical();
+
 
         }
 
@@ -227,7 +215,5 @@ namespace Cofdream.ToolKitEditor
 
             thread.Start();
         }
-
-
     }
 }
