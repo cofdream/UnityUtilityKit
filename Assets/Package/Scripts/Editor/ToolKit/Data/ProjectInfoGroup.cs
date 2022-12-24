@@ -48,4 +48,50 @@ namespace Cofdream.ToolKitEditor
                 _projectInfoGroups.Clear();
         }
     }
+    
+    [CustomEditor(typeof(ProjectInfoGroup)), CanEditMultipleObjects]
+    internal class ProjectInfoGroupInspector : Editor
+    {
+        [SerializeField] private string _commandLine;
+
+        private GUIContent _setCommandLineValueGUIContent;
+
+        private void OnEnable()
+        {
+            _setCommandLineValueGUIContent = new GUIContent("Set Command Line Values", "Set Command Line Value To All Project Info");
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            
+            EditorGUILayout.BeginHorizontal();
+            {
+                _commandLine = EditorGUILayout.TextField("Command Line",_commandLine);
+                if (GUILayout.Button(_setCommandLineValueGUIContent,GUILayout.ExpandWidth(false)))
+                {
+                    foreach (var targetObj in targets)
+                    {
+                        var  projectInfoGroup = (ProjectInfoGroup)targetObj;
+                        foreach (var projectGroup in projectInfoGroup.ProjectGroups)
+                        {
+                            foreach (var projectInfo in projectGroup.ProjectInfos)
+                            {
+                                projectInfo.CommandLine = _commandLine;
+                                EditorUtility.SetDirty(projectInfo);
+                                AssetDatabase.SaveAssetIfDirty(projectInfo);
+                                CustomAssetModificationProcessor.SaveAssetIfDirty(projectInfo);
+                            }
+                            EditorUtility.SetDirty(projectGroup);
+                            CustomAssetModificationProcessor.SaveAssetIfDirty(projectGroup);
+                        }
+                        EditorUtility.SetDirty(projectInfoGroup);
+                        CustomAssetModificationProcessor.SaveAssetIfDirty(projectInfoGroup);
+                    }
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            
+        }
+    }
 }
