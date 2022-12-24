@@ -79,7 +79,6 @@ namespace Cofdream.ToolKitEditor
                             {
                                 projectInfo.CommandLine = _commandLine;
                                 EditorUtility.SetDirty(projectInfo);
-                                AssetDatabase.SaveAssetIfDirty(projectInfo);
                                 CustomAssetModificationProcessor.SaveAssetIfDirty(projectInfo);
                             }
                             EditorUtility.SetDirty(projectGroup);
