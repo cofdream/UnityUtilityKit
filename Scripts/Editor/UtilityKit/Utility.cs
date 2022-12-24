@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace Cofdream.ToolKitEditor
 {
-    public static class Utils
+    public static class Utility
     {
         public static string PackageIconPath = "Assets/Resources/GirlHead.png";
 

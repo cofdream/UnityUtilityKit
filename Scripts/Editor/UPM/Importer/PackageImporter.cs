@@ -29,7 +29,7 @@ namespace Cofdream.ToolKitEditor.UPM
             packageManifest.Package = package;
 
 #if UNITY_2021_2_OR_NEWER
-            var texture2D = AssetDatabase.LoadAssetAtPath<Texture2D>(Utils.PackageIconPath);
+            var texture2D = AssetDatabase.LoadAssetAtPath<Texture2D>(Utility.PackageIconPath);
             EditorGUIUtility.SetIconForObject(packageManifest, texture2D);
 #endif
         }
