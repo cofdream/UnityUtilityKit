@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45686317c55f4734a92a6aec40f92c5f, type: 3}
   m_Name: ToolData
   m_EditorClassIdentifier: 
-  SceneDatas:
-  - Name: 
-    SceneAsset: {fileID: 0}
+  SceneDatas: []
