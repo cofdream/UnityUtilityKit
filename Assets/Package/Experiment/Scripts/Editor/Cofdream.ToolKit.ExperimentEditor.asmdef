@@ -1,0 +1,19 @@
+{
+    "name": "Cofdream.ToolKit.ExperimentEditor",
+    "rootNamespace": "Cofdream.ToolKit.ExperimentEditor",
+    "references": [
+        "GUID:49623f7160625d74eb76f3b26e98cbe8",
+        "GUID:30acd5d1039bb8944a2e58b3135d38ed"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

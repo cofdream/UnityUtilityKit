@@ -1,0 +1,16 @@
+{
+    "name": "Cofdream.ToolKit.Experiment",
+    "rootNamespace": "Cofdream.ToolKit.Experiment",
+    "references": [
+        "GUID:49623f7160625d74eb76f3b26e98cbe8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
