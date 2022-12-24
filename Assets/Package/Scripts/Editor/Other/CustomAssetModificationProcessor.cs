@@ -155,11 +155,17 @@ namespace Cofdream.ToolKitEditor
 #if UNITY_2020_3_OR_NEWER
     public partial class CustomAssetModificationProcessor
     {
-        [System.Obsolete("Use AssetDatabase.SaveAssetIfDirty(GUID guid)", true)]
-        public static void SaveAssetIfDirty(GUID guid) { }
+        [System.Obsolete("Use AssetDatabase.SaveAssetIfDirty(GUID guid)", false)]
+        public static void SaveAssetIfDirty(GUID guid)
+        {
+            AssetDatabase.SaveAssetIfDirty(guid);
+        }
 
-        [System.Obsolete("Use AssetDatabase.SaveAssetIfDirty(UnityEngine.Object obj)", true)]
-        public static void SaveAssetIfDirty(UnityEngine.Object obj) { }
+        [System.Obsolete("Use AssetDatabase.SaveAssetIfDirty(UnityEngine.Object obj)", false)]
+        public static void SaveAssetIfDirty(UnityEngine.Object obj)
+        {
+            AssetDatabase.SaveAssetIfDirty(obj);
+        }
     }
 #else
     public partial class CustomAssetModificationProcessor
