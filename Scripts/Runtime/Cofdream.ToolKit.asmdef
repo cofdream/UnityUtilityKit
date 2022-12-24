@@ -1,5 +1,5 @@
 {
-    "name": "Cofdream.ToolKitRuntime",
+    "name": "Cofdream.ToolKit",
     "rootNamespace": "Cofdream.ToolKit",
     "references": [],
     "includePlatforms": [],
