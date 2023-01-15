@@ -38,7 +38,9 @@ namespace Cofdream.ToolKitEditor
 
             _keys = Dictionary.Keys.ToArray();
             _values = Dictionary.Values.ToArray();
+            Dictionary.Clear();
         }
+
         private void OnValidate()
         {
             Debug.Log(1);

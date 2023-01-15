@@ -1,29 +1,37 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Cofdream.ToolKitEditor
+namespace Cofdream.ToolKitEditor.AssetNavigator
 {
     public class AssetNavigatorData : ScriptableObject
     {
-        
-        [HideInInspector]
-        public EditorSearchField _searchField;
+        public EditorSearchField SearchField;
 
-        public DictionaryGUIDToUObject _selectedObjects;
+        public Rect SelectTypePopupWindowRect;
 
+        public SerializableDictionary<GUID, AssetNavigatorMenuContet> SelectedObjectDictionary;
 
-        private void Awake()
+        public static AssetNavigatorData LoadAsset(string assetPath)
         {
-            _searchField = new EditorSearchField();
-            if (_selectedObjects == null)
+            var data = AssetDatabase.LoadAssetAtPath<AssetNavigatorData>(assetPath);
+            if (data == null)
             {
-                _selectedObjects = CreateInstance<DictionaryGUIDToUObject>();
-            }
-        }
+                data = CreateInstance<AssetNavigatorData>();
+                AssetDatabase.CreateAsset(data, assetPath);
 
-        private void OnDestroy()
-        {
-            _searchField = null;
+                data.SearchField = new EditorSearchField();
+
+                data.SelectedObjectDictionary = CreateInstance<DictionaryGUIDToUObject>();
+                data.SelectedObjectDictionary.name = "GUID_To_Object_Datas";
+                AssetDatabase.AddObjectToAsset(data.SelectedObjectDictionary, data);
+
+                AssetDatabase.SetMainObject(data, assetPath);
+                AssetDatabase.ImportAsset(assetPath);
+
+                EditorUtility.SetDirty(data);
+                CustomAssetModificationProcessor.SaveAssetIfDirty(data);
+            }
+            return data;
         }
     }
 }

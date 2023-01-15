@@ -9,13 +9,35 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditorInternal;
 using UnityEngine;
-using MenuItem = Cofdream.NavigatorMenuItem.MenuItem;
 using Object = UnityEngine.Object;
 
-namespace Cofdream.ToolKitEditor
+namespace Cofdream.ToolKitEditor.AssetNavigator
 {
+    [Serializable]
+    public struct AssetNavigatorMenuContet : IMenuContet
+    {
 
-    public class ActiveObjectNavigator : EditorWindowPlus
+        public bool IsOn;
+
+        public Object Object;
+
+        private GUIContent _content;
+        public GUIContent GUIContent => _content;
+
+        public AssetNavigatorMenuContet(GUIContent content, Object obj)
+        {
+            IsOn = false;
+            _content = content;
+            Object = obj;
+        }
+
+        public void OnGUI(Rect rect)
+        {
+            IsOn = EditorGUILayout.ToggleLeft(GUIContent.none, IsOn);
+        }
+    }
+
+    public class AssetNavigatorEditorWindow : EditorWindowPlus
     {
         ////icon
         //private const string ICON_LOCK =
@@ -42,60 +64,38 @@ namespace Cofdream.ToolKitEditor
 
         //↑ old
 
-
         private int menuIndex;
-        private MenuItem[] menuItems;
+        private IMenuItem[] menuItems;
         private GUIContent[] menuGUIContents;
 
-        //private int count;
-
-        private string searchText;
-        [SerializeField]
-        private EditorSearchField _searchField;
-
-        [SerializeField]
-        private SerializableDictionary<GUID, Object> _selectedObjects;
-
-        private const string AssetNavigatorDataPath = "Assets/Cofdream/UtilityKit/AssetNavigator/AssetNavigatorData.asset";
 
         [SerializeField]
         private AssetNavigatorData _assetNavigatorData;
 
-
         private void Awake()
         {
-            _searchField = new EditorSearchField();
-
-            _assetNavigatorData = AssetDatabase.LoadAssetAtPath<AssetNavigatorData>(AssetNavigatorDataPath);
-            if (_assetNavigatorData == null)
-            {
-                _assetNavigatorData = CreateInstance<AssetNavigatorData>();
-                AssetDatabase.CreateAsset(_assetNavigatorData, AssetNavigatorDataPath);
-                AssetDatabase.ImportAsset(AssetNavigatorDataPath);
-            }
+            _assetNavigatorData = AssetNavigatorData.LoadAsset("Assets/Cofdream/UtilityKit/AssetNavigator/AssetNavigatorData.asset");
 
             InitNavigatorObjects();
         }
 
         private void OnDestroy()
         {
-            _searchField = null;
-
-            Resources.UnloadAsset(_selectedObjects);
-            _selectedObjects = null;
+            Resources.UnloadAsset(_assetNavigatorData);
+            _assetNavigatorData = null;
         }
 
         private void OnEnable()
         {
-            //GenerateGUIContents();
+            GenerateGUIContents();
         }
 
         private void OnDisable()
         {
+            CustomAssetModificationProcessor.SaveAssetIfDirty(_assetNavigatorData);
         }
 
-
-
+        private int aa;
         private void OnGUI()
         {
             if (EditorApplication.isCompiling)
@@ -115,11 +115,37 @@ namespace Cofdream.ToolKitEditor
 
 
             //搜索栏
-            searchText = _searchField.ToolbarSearchField(searchText);
+            _assetNavigatorData.SearchField.ToolbarSearchField();
 
             // content
-            if (menuIndex < menuItems.Length)
-                menuItems[menuIndex].Draw();
+            if (menuItems != null && menuIndex < menuItems.Length)
+                menuItems[menuIndex]?.Draw();
+
+            EditorGUILayout.BeginHorizontal();
+
+            aa = EditorGUILayout.IntPopup(aa, new string[] { "1", "2", "3" }, new int[] { 1, 2, 3 });
+
+            EditorGUILayout.EndHorizontal();
+
+
+            if (EditorGUILayout.DropdownButton(new GUIContent("Popup Options"), FocusType.Passive))
+            {
+                PopupWindow.Show(_assetNavigatorData.SelectTypePopupWindowRect, new SelectTypePopupWindow<AssetNavigatorMenuContet>(_assetNavigatorData.SelectedObjectDictionary.Dictionary.Values.ToList()));
+            }
+
+            if (Event.current.type == EventType.Repaint)
+                _assetNavigatorData.SelectTypePopupWindowRect = GUILayoutUtility.GetLastRect();
+
+
+            foreach (var item in _assetNavigatorData.SelectedObjectDictionary.Dictionary)
+            {
+                EditorGUILayout.BeginHorizontal();
+                {
+                    EditorGUILayout.ObjectField(item.Value.GUIContent, item.Value.Object, item.Value.Object.GetType(), false);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+
 
             // ↓ old
 
@@ -166,27 +192,35 @@ namespace Cofdream.ToolKitEditor
             if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Selection.activeInstanceID, out var guid, out long _) == false)
                 return;
 
-            if (GUID.TryParse(guid, out var result))
-            {
-                _assetNavigatorData._selectedObjects.Dictionary.TryAdd(result, Selection.activeObject);
-            }
+            if (GUID.TryParse(guid, out var result) == false)
+                return;
+
+            _assetNavigatorData.SelectedObjectDictionary.Dictionary.TryAdd(result, new AssetNavigatorMenuContet(new GUIContent(Selection.activeObject.name), Selection.activeObject));
+            EditorUtility.SetDirty(_assetNavigatorData);
+            base.Repaint();
         }
 
 
         private void InitNavigatorObjects()
         {
-            MenuItemSetting setting = CreateInstance<MenuItemSetting>();
+            MenuItemSetting setting = new MenuItemSetting();
             setting.icon = "Settings";
-            menuItems = new MenuItem[]
+            var mm = new MenuItemSetting[]
             {
-                //new MenuItem(){ type = typeof(Object)                            , str = "All"               },
-                //new MenuItem(){ type = typeof(MonoScript)      , isIcon = true   , str = "cs Script Icon"    },
-                //new MenuItem(){ type = typeof(GameObject)      , isIcon = true   , str = "Prefab Icon"       },
+                new MenuItemSetting(){ type = typeof(Object)                            , str = "All"               },
+                new MenuItemSetting(){ type = typeof(MonoScript)      , isIcon = true   , str = "cs Script Icon"    },
+                new MenuItemSetting(){ type = typeof(GameObject)      , isIcon = true   , str = "Prefab Icon"       },
 
-                //new MenuItem(){ type = typeof(Object)          , isIcon = true   , str = "Settings"          },
+                new MenuItemSetting(){ type = typeof(Object)          , isIcon = true   , str = "Settings"          },
 
                 setting,
             };
+
+            foreach (var item in mm)
+            {
+                item.Awake();
+            }
+            menuItems = mm;
         }
         private void GenerateGUIContents()
         {

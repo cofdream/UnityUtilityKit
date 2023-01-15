@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Cofdream.ToolKitEditor
+namespace Cofdream.ToolKitEditor.AssetNavigator
 {
-    public class DictionaryGUIDToUObject : SerializableDictionary<GUID, Object>
+    public class DictionaryGUIDToUObject : SerializableDictionary<GUID, AssetNavigatorMenuContet>
     {
         
     }
 
-    [CustomPropertyDrawer(typeof(SerializableDictionary<GUID, Object>))]
+    //[CustomPropertyDrawer(typeof(SerializableDictionary<GUID, AssetNavigatorMenuContet>))]
     public class SSS : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
