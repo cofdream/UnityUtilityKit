@@ -11,7 +11,7 @@ namespace Halak
 {
     public static class IconMiner
     {
-        [MenuItem("Unity Editor Icons/Export All", priority = -1001)]
+        //[MenuItem("Unity Editor Icons/Export All", priority = -1001)]
         private static void ExportIcons()
         {
             EditorUtility.DisplayProgressBar("Export Icons", "Exporting...", 0.0f);
@@ -48,7 +48,7 @@ namespace Halak
             }
         }
 
-        [MenuItem("Unity Editor Icons/Generate README.md", priority = -1000)]
+        //[MenuItem("Unity Editor Icons/Generate README.md", priority = -1000)]
         private static void GenerateREADME()
         {
             var guidMaterial = new Material(Shader.Find("Unlit/Texture"));

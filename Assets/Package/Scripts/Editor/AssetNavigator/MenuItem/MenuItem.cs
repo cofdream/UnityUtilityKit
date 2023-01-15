@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Cofdream.Navigator
+namespace Cofdream.NavigatorMenuItem
 {
     public interface IInstance
     {

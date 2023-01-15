@@ -11,7 +11,7 @@ namespace Cofdream.ToolKitEditor
     /// </summary>
     public class SundriesKit
     {
-        private const string HEAD = MenuItemUtil.ToolKit + "杂物/";
+        private const string HEAD = MenuItemName.ToolKit + "杂物/";
 
         #region XXXX后播放
         private const string IS_PLAY_EDITOR_AFTER_COMPILATION = "ISPlayEditorAfterCompilation";

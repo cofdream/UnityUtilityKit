@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Cofdream.Navigator
+namespace Cofdream.NavigatorMenuItem
 {
     public class MenuItemSetting : MenuItem
     {

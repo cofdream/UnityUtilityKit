@@ -6,7 +6,7 @@ namespace Cofdream.ToolKitEditor
 {
     public class AssetFind : EditorWindow, IHasCustomMenu
     {
-        [MenuItem(MenuItemUtil.ToolKit + "Wait tidy/AssetFindTool")]
+        [MenuItem(MenuItemName.ToolKit + "Wait tidy/AssetFindTool")]
         private static void Open()
         {
             EditorWindowExtension.GetWindowInCenter<AssetFind>(new Vector2(550, 500)).Show();

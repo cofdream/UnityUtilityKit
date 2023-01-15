@@ -1,27 +1,22 @@
-﻿using Cofdream;
-using Cofdream.ToolKitEditor;
-using JetBrains.Annotations;
+﻿using Cofdream.NavigatorMenuItem;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditorInternal;
 using UnityEngine;
+using MenuItem = Cofdream.NavigatorMenuItem.MenuItem;
 using Object = UnityEngine.Object;
 
-namespace Cofdream.Navigator
+namespace Cofdream.ToolKitEditor
 {
-    public class ActiveObjectNavigator : EditorWindow, IHasCustomMenu
-    {
-        [UnityEditor.MenuItem("Tools/ActiveObjectNavigator", false, 900)]
-        static public void ShowNavigator()
-        {
-            GetWindow<ActiveObjectNavigator>("Navigator", typeof(EditorWindow).Assembly.GetType("UnityEditor.InspectorWindow")).Show();
-        }
 
+    public class ActiveObjectNavigator : EditorWindowPlus
+    {
         ////icon
         //private const string ICON_LOCK =
         //    "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAYAAADNo/U5AAAAtklEQVQoFb2QsQ0CMQxFY6Cgp+EmYA4WgDVYhtuFLViBCagoKY/wXxRHXJDCQcGXvuxvf599sRhj+BaLaqCT3osr8SaexKs4Bpsyd4p38RVo6u5J0UWnBoazuBGXOaKp03dv8OSgImDAa0Q0oF/qs3zsOsfL+Pjg2vup7UOV94PU2l4cxBbo40snmpJB352y8SHfnBswvw2Y2ZZmheIrSWVoyv8N/fwQR/0AL9gCfXwJbPJ8cnwCewTKXVfaQ3EAAAAASUVORK5CYII=";
@@ -47,71 +42,80 @@ namespace Cofdream.Navigator
 
         //↑ old
 
-        private bool isLock;
-        private GUIContent lockGUIContent;
-        private GUIContent lockOnGUIContent;
 
         private int menuIndex;
         private MenuItem[] menuItems;
         private GUIContent[] menuGUIContents;
 
         //private int count;
-        //private Object[] selectObectjs;
 
         private string searchText;
-        EditorSearchField searchField;
+        [SerializeField]
+        private EditorSearchField _searchField;
+
+        [SerializeField]
+        private SerializableDictionary<GUID, Object> _selectedObjects;
+
+        private const string AssetNavigatorDataPath = "Assets/Cofdream/UtilityKit/AssetNavigator/AssetNavigatorData.asset";
+
+        [SerializeField]
+        private AssetNavigatorData _assetNavigatorData;
 
 
         private void Awake()
         {
-            //lockStyle = (GUIStyle)"IN LockButton";
-            //style = new Style();
+            _searchField = new EditorSearchField();
+
+            _assetNavigatorData = AssetDatabase.LoadAssetAtPath<AssetNavigatorData>(AssetNavigatorDataPath);
+            if (_assetNavigatorData == null)
+            {
+                _assetNavigatorData = CreateInstance<AssetNavigatorData>();
+                AssetDatabase.CreateAsset(_assetNavigatorData, AssetNavigatorDataPath);
+                AssetDatabase.ImportAsset(AssetNavigatorDataPath);
+            }
 
             InitNavigatorObjects();
+        }
 
-            lockGUIContent = EditorGUIUtility.IconContent("IN LockButton");
-            lockOnGUIContent = EditorGUIUtility.IconContent("IN LockButton on");
+        private void OnDestroy()
+        {
+            _searchField = null;
 
-            //selectObectjs = new Object[100];
-            //count = 0;
+            Resources.UnloadAsset(_selectedObjects);
+            _selectedObjects = null;
         }
 
         private void OnEnable()
         {
-            //isOpen = true;
-            //_scrollPosition = Vector2.zero;
-            //Selection.selectionChanged += TrackSelectionChange;
-
-            //↑ all old
-            searchField = new EditorSearchField();
-            GenerateGUIContents();
-            //Selection.selectionChanged +=
-
-            Debug.Log("enable");
+            //GenerateGUIContents();
         }
 
         private void OnDisable()
         {
-            //isOpen = false;
-            //Selection.selectionChanged -= TrackSelectionChange;
-
-            //↑ all old
-
         }
+
+
 
         private void OnGUI()
         {
             if (EditorApplication.isCompiling)
             {
-                ShowNotification(new GUIContent("Compiling..."));
+                ShowNotification(GUIContentExtension.Compiling);
                 return;
             }
 
             // 菜单栏
-            menuIndex = GUILayout.Toolbar(menuIndex, menuGUIContents, GUILayout.MaxHeight(20));
+            menuGUIContents = new GUIContent[]
+            {
+                new GUIContent("All"),
+                new GUIContent(EditorGUIUtility.FindTexture("Settings")),
+            };
+
+            menuIndex = GUILayout.Toolbar(menuIndex, menuGUIContents, GUI.skin.button, GUI.ToolbarButtonSize.Fixed);
+
 
             //搜索栏
-            searchText = searchField.ToolbarSearchField(searchText);
+            searchText = _searchField.ToolbarSearchField(searchText);
 
             // content
             if (menuIndex < menuItems.Length)
@@ -151,28 +155,27 @@ namespace Cofdream.Navigator
             //}
         }
 
-        [UsedImplicitly]
-        private void ShowButton(Rect position)
+        protected override void ShowButton(Rect position)
         {
-            //EditorGUI 无法触发点击事件
-            //isLock = EditorGUI.Toggle(position, isLock ? lockOnGUIContent : lockGUIContent, isLock, GUIStyle.none);
-            isLock = GUI.Toggle(position, isLock, isLock ? lockOnGUIContent : lockGUIContent, GUIStyle.none);
+            base.ShowLockButton(ref position);
         }
 
         private void OnSelectionChange()
         {
-            Debug.Log("OnSelectionChange " + Selection.activeInstanceID);
-        }
+            // 缓存选中对象
+            if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Selection.activeInstanceID, out var guid, out long _) == false)
+                return;
 
-        public void AddItemsToMenu(GenericMenu menu)
-        {
-            menu.AddItem(new GUIContent("Lock"), false, () => { isLock = !isLock; });
+            if (GUID.TryParse(guid, out var result))
+            {
+                _assetNavigatorData._selectedObjects.Dictionary.TryAdd(result, Selection.activeObject);
+            }
         }
 
 
         private void InitNavigatorObjects()
         {
-            MenuItemSetting setting = UnityEngine.ScriptableObject.CreateInstance<MenuItemSetting>();
+            MenuItemSetting setting = CreateInstance<MenuItemSetting>();
             setting.icon = "Settings";
             menuItems = new MenuItem[]
             {
@@ -196,12 +199,6 @@ namespace Cofdream.Navigator
             {
                 menuGUIContents[i] = menuItems[i].GUIContent;
             }
-        }
-
-        
-        public void AddMenuItem()
-        {
-
         }
 
 
