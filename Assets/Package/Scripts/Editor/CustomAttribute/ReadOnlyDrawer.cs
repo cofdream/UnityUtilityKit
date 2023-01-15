@@ -16,7 +16,8 @@ namespace Cofdream.ToolKitEditor
         {
             var enabled = GUI.enabled;
             GUI.enabled = false;
-            EditorGUI.PropertyField(position, property, label);
+            base.OnGUI(position, property, label);
+            //EditorGUI.PropertyField(position, property, label);
             GUI.enabled = enabled;
         }
     }

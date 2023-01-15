@@ -13,7 +13,7 @@ namespace Cofdream.ToolKitEditor
         [MenuItem(MenuItemName.ToolKit + "ActiveObjectNavigator", false, 1)]
         private static void Open()
         {
-            EditorWindow.GetWindow<ActiveObjectNavigator>("资源导航").Show();
+            EditorWindow.GetWindow<AssetNavigator.AssetNavigatorEditorWindow>("资源导航").Show();
         }
 
         #endregion

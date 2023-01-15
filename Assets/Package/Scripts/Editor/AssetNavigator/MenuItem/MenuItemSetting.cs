@@ -7,11 +7,15 @@ using UnityEngine;
 
 namespace Cofdream.NavigatorMenuItem
 {
-    public class MenuItemSetting : MenuItem
+    public class MenuItemSetting : IMenuItem
     {
+        public Type type { get; set; }
+        public string str { get; set; }
+        public bool isIcon { get; set; }
+
         public string icon;
 
-        public override GUIContent GUIContent
+        public GUIContent GUIContent
         {
             get
             {
@@ -30,10 +34,10 @@ namespace Cofdream.NavigatorMenuItem
 
         private int popupIndex;
 
-        private void Awake()
+        public void Awake()
         {
             var thisType = this.GetType();
-            var baseType = typeof(MenuItem);
+            var baseType = typeof(IMenuItem);
             var assembly = baseType.Assembly;
             types = assembly.GetTypes().Where((type) =>
             {
@@ -60,7 +64,7 @@ namespace Cofdream.NavigatorMenuItem
 
         }
 
-        public override void Draw()
+        public void Draw()
         {
             EditorGUILayout.BeginHorizontal();
             {

@@ -12,4 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a428be7364ab064986b7452c170c6f0, type: 3}
   m_Name: AssetNavigatorData
   m_EditorClassIdentifier: 
-  _selectedObjects: {fileID: 0}
+  SearchField:
+    SearchTerm: 
+  SelectTypePopupWindowRect:
+    serializedVersion: 2
+    x: 3
+    y: 85
+    width: 315
+    height: 18
+  SelectedObjectDictionary: {fileID: 8010199808491383950}
+--- !u!114 &8010199808491383950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b72c59d57aa8e0e4d977f66a48f0da5a, type: 3}
+  m_Name: GUID_To_Object_Datas
+  m_EditorClassIdentifier: 
+  _keys: []
+  _values:
+  - IsOn: 0
+    Object: {fileID: 5897886265953266890, guid: 865c9991d0d1dd44a98b6ff71618ad00,
+      type: 3}
+  - IsOn: 0
+    Object: {fileID: 102900000, guid: 9fa200b923447dd42815321684ba92da, type: 3}
+  - IsOn: 0
+    Object: {fileID: 102900000, guid: 3bf0f860aad6070489fcfc412f9a3ea0, type: 3}
+  - IsOn: 0
+    Object: {fileID: 11500000, guid: 41e371e6a0db3eb4bbfa52f20f049c4f, type: 3}
