@@ -12,7 +12,7 @@ namespace Cofdream.ToolKitEditor
         /// <summary>
         /// 修改选中文件的编码格式为UTF-8
         /// </summary>
-        [MenuItem(MenuItemUtil.ToolKit + "Change file encoding to UTF-8")]
+        [MenuItem(MenuItemName.ToolKit + "Change file encoding to UTF-8")]
         static void ChangeSelecte()
         {
             var objs = Selection.objects;

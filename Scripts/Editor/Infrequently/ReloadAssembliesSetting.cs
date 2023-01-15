@@ -6,7 +6,7 @@ namespace Cofdream.ToolKitEditor
     [InitializeOnLoad]
     public class ReloadAssembliesSetting
     {
-        internal const string MENUKEY = MenuItemUtil.ToolKit + "LockReloadAssemblies";
+        internal const string MENUKEY = MenuItemName.ToolKit + "LockReloadAssemblies";
         internal const string KEY = "LockReloadAssemblies";
         internal const string playeModelTipKey = "PlayModelLockReloadAssembliesTip";
 

@@ -11,7 +11,7 @@ namespace Cofdream.ToolKitEditor
 {
     public class ToolKitWindow : EditorWindowPlus
     {
-        [MenuItem(MenuItemUtil.ToolKit + "ToolKitWindow", false, 1)]
+        [MenuItem(MenuItemName.ToolKit + "ToolKitWindow", false, 1)]
         private static void OpenWindow()
         {
             GetWindow<ToolKitWindow>("工具").Show();

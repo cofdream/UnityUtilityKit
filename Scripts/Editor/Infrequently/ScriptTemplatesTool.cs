@@ -12,7 +12,7 @@ namespace Cofdream.ToolKitEditor
         /// <summary>
         /// 删除脚本模板末尾的空格
         /// </summary>
-        [MenuItem(MenuItemUtil.ToolKit + "Remove Script Templates End Wrap", false, priority)]
+        [MenuItem(MenuItemName.ToolKit + "Remove Script Templates End Wrap", false, priority)]
         public static void RemoveScriptTemplatesEndWrap()
         {
             if (Application.platform == RuntimePlatform.WindowsEditor)
@@ -47,7 +47,7 @@ namespace Cofdream.ToolKitEditor
         /// <summary>
         /// 还原 删除脚本模板末尾的空格
         /// </summary>
-        [MenuItem(MenuItemUtil.ToolKit + "Reduction Remove Script Templates End Wrap", false, priority + 1)]
+        [MenuItem(MenuItemName.ToolKit + "Reduction Remove Script Templates End Wrap", false, priority + 1)]
         public static void ReductionRemoveScriptTemplatesEndWrap()
         {
             if (Application.platform == RuntimePlatform.WindowsEditor)
