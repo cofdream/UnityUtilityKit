@@ -16,7 +16,6 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
     [Serializable]
     public struct AssetNavigatorMenuContet : IMenuContet
     {
-
         public bool IsOn;
 
         public Object Object;
@@ -195,7 +194,10 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
             if (GUID.TryParse(guid, out var result) == false)
                 return;
 
-            _assetNavigatorData.SelectedObjectDictionary.Dictionary.TryAdd(result, new AssetNavigatorMenuContet(new GUIContent(Selection.activeObject.name), Selection.activeObject));
+            var dic = _assetNavigatorData.SelectedObjectDictionary.Dictionary;
+            if (dic.ContainsKey(result) == false)
+                _assetNavigatorData.SelectedObjectDictionary.Dictionary.Add(result, new AssetNavigatorMenuContet(new GUIContent(Selection.activeObject.name), Selection.activeObject));
+            
             EditorUtility.SetDirty(_assetNavigatorData);
             base.Repaint();
         }
