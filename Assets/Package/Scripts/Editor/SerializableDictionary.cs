@@ -40,10 +40,5 @@ namespace Cofdream.ToolKitEditor
             _values = Dictionary.Values.ToArray();
             Dictionary.Clear();
         }
-
-        private void OnValidate()
-        {
-            Debug.Log(1);
-        }
     }
 }
