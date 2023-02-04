@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Cofdream.ToolKitEditor
 {
@@ -25,6 +26,8 @@ namespace Cofdream.ToolKitEditor
                 EditorApplication.UnlockReloadAssemblies();
             }
             EditorApplication.playModeStateChanged += LogPlayModeState;
+
+
         }
 
         private static void LogPlayModeState(PlayModeStateChange state)
@@ -71,6 +74,53 @@ namespace Cofdream.ToolKitEditor
                     Menu.SetChecked(MENUKEY, true);
                 }
             }
+        }
+        [MenuItem("testasdasda/Bind", priority = int.MaxValue)]
+        private static void BInd()
+        {
+            MainToolbarExtensions.ToolbarZoneRightAlign.Add(CreateVisualElement());
+        }
+        private static VisualElement CreateVisualElement()
+        {
+            var button = new Button();
+            button.name = KEY;
+
+            //var backgroundImage = new Image();
+            //button.Add(backgroundImage);
+            //backgroundImage.name = "background";
+            //backgroundImage.style.backgroundImage = EditorGUIUtility.FindTexture("cs Script Icon");
+            //backgroundImage.style.overflow = Overflow.Visible;
+            //backgroundImage.style.alignSelf = Align.Center;
+            //backgroundImage.style.width = 16f;
+            //backgroundImage.style.height = 16f;
+            //backgroundImage.BringToFront();
+
+            var lockImage = new Image();
+            button.Add(lockImage);
+            lockImage.name = "lock";
+            lockImage.style.backgroundImage = EditorGUIUtility.FindTexture("LockIcon-On");
+            lockImage.style.visibility = LockReloadAssemblies ? Visibility.Visible : Visibility.Hidden;
+            lockImage.style.overflow = Overflow.Visible;
+            //lockImage.style.alignSelf = Align.Center;
+            //lockImage.style.width = 11f;
+            //lockImage.style.height = 11f;
+            lockImage.SendToBack();
+            
+
+            button.style.backgroundColor = new Color(56f / 255f, 56f / 255f, 56f / 255f, 255f / 255f);
+            button.style.alignContent = Align.Center;
+            button.style.width = 32f;
+            button.style.height = 20f;
+            button.style.overflow = Overflow.Visible;
+
+            button.clicked += () =>
+            {
+                lockImage.style.visibility = LockReloadAssemblies ? Visibility.Visible : Visibility.Hidden;
+                SetLockReloadAssemblies();
+            };
+
+
+            return button;
         }
     }
 }
