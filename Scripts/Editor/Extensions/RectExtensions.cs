@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Cofdream.ToolKitEditor
 {
-    public static class RectExtension
+    public static class RectExtensions
     {
         //Split
         public static void SplitVertical(this Rect self, float height, out Rect top, out Rect bottom)

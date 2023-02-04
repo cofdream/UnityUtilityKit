@@ -9,7 +9,7 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
 
         public Rect SelectTypePopupWindowRect;
 
-        public SerializableDictionary<GUID, AssetNavigatorMenuContet> SelectedObjectDictionary;
+        public SerializableDictionary<GUID, AssetNavigatorMenuContent> SelectedObjectDictionary;
 
         public static AssetNavigatorData LoadAsset(string assetPath)
         {

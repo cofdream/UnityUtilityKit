@@ -154,7 +154,7 @@ namespace Cofdream.ToolKitEditor
         {
             if (selectMode)
             {
-                var gos = SelectionExtension.Components<Transform>();
+                var gos = SelectionExtensions.Components<Transform>();
 
                 datas = (from go in gos
                          select new Transform2DSortData(go)
