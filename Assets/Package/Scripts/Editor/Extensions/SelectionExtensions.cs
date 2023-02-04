@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Cofdream.ToolKitEditor
 {
-    public static class SelectionExtension
+    public static class SelectionExtensions
     {
         /// <summary>
         /// 获取选中游戏对象，顺序为选中时的顺序，仅限场景内

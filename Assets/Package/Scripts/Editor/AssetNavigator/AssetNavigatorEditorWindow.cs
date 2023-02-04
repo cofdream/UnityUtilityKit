@@ -14,7 +14,7 @@ using Object = UnityEngine.Object;
 namespace Cofdream.ToolKitEditor.AssetNavigator
 {
     [Serializable]
-    public struct AssetNavigatorMenuContet : IMenuContet
+    public class AssetNavigatorMenuContent : IMenuContent
     {
         public bool IsOn;
 
@@ -23,7 +23,7 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
         private GUIContent _content;
         public GUIContent GUIContent => _content;
 
-        public AssetNavigatorMenuContet(GUIContent content, Object obj)
+        public AssetNavigatorMenuContent(GUIContent content, Object obj)
         {
             IsOn = false;
             _content = content;
@@ -129,7 +129,7 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
 
             if (EditorGUILayout.DropdownButton(new GUIContent("Popup Options"), FocusType.Passive))
             {
-                PopupWindow.Show(_assetNavigatorData.SelectTypePopupWindowRect, new SelectTypePopupWindow<AssetNavigatorMenuContet>(_assetNavigatorData.SelectedObjectDictionary.Dictionary.Values.ToList()));
+                SelectTypePopupWindow.DisplayPropWindow(_assetNavigatorData.SelectTypePopupWindowRect, _assetNavigatorData.SelectedObjectDictionary.Dictionary.Values);
             }
 
             if (Event.current.type == EventType.Repaint)
@@ -145,6 +145,17 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
                 EditorGUILayout.EndHorizontal();
             }
 
+            var aa1 = new GUIContent();
+
+            aa1.text = "1";
+            GUILayout.Label(aa1);
+
+
+            aa1.text = "2";
+            GUILayout.Label(aa1);
+
+            aa1.text = "3";
+            GUILayout.Label(aa1);
 
             // ↓ old
 
@@ -196,7 +207,7 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
 
             var dic = _assetNavigatorData.SelectedObjectDictionary.Dictionary;
             if (dic.ContainsKey(result) == false)
-                _assetNavigatorData.SelectedObjectDictionary.Dictionary.Add(result, new AssetNavigatorMenuContet(new GUIContent(Selection.activeObject.name), Selection.activeObject));
+                _assetNavigatorData.SelectedObjectDictionary.Dictionary.Add(result, new AssetNavigatorMenuContent(new GUIContent(Selection.activeObject.name), Selection.activeObject));
             
             EditorUtility.SetDirty(_assetNavigatorData);
             base.Repaint();

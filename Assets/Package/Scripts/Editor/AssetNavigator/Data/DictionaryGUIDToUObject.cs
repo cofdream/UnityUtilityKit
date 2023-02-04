@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Cofdream.ToolKitEditor.AssetNavigator
 {
-    public class DictionaryGUIDToUObject : SerializableDictionary<GUID, AssetNavigatorMenuContet>
+    public class DictionaryGUIDToUObject : SerializableDictionary<GUID, AssetNavigatorMenuContent>
     {
         
     }

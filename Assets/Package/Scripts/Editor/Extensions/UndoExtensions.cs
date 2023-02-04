@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace Cofdream.ToolKitEditor
 {
-    public class UndoExtension : EditorWindow
+    public class UndoExtensions : EditorWindow
     {
         [MenuItem("Edit/Clear All Undo History", false, 13)]
         static void ClearAllUndoHistory()
