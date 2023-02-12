@@ -121,6 +121,7 @@ namespace Cofdream.ToolKitEditor
         {
             menu.AddItem(EditorGUIUtility.TrTextContent("Reload tools"), false, () => { Debug.LogWarning("Not do."); });
             this.EditScript(menu);
+            this.PinScript(menu);
         }
 
 

@@ -11,7 +11,7 @@ namespace Cofdream.ToolKitEditor
     /// <summary>
     /// This extension allow to drag&drop subassets while pressing 'Alt'
     /// </summary>
-    [InitializeOnLoad]
+    [UnityEditor.InitializeOnLoad]
     internal static class SubAssetDragAndDrop
     {
         static SubAssetDragAndDrop()

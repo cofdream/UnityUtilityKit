@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Cofdream.NavigatorMenuItem
 {
+    [System.Serializable]
     public class MenuItemSetting : IMenuItem
     {
         public Type type { get; set; }
