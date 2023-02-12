@@ -7,11 +7,12 @@ namespace Cofdream.ToolKitEditor
 {
     public class EditorWindowPlus : EditorWindow, IHasCustomMenu
     {
-        protected bool isLock { get; set; } = false;
+        protected bool IsLock { get; set; } = false;
         
         public virtual void AddItemsToMenu(GenericMenu menu)
         {
             this.EditScript(menu);
+            this.PinScript(menu);
         }
 
         protected virtual void ShowButton(Rect position)
@@ -21,7 +22,7 @@ namespace Cofdream.ToolKitEditor
 
         protected void ShowLockButton(ref Rect position)
         {
-            isLock = GUI.Toggle(position, isLock, isLock ? GUIContentExtension.LockOn : GUIContentExtension.LockOff, GUIStyle.none);
+            IsLock = GUI.Toggle(position, IsLock, IsLock ? GUIContentExtension.LockOn : GUIContentExtension.LockOff, GUIStyle.none);
             position.x -= 20f;
         }
     }

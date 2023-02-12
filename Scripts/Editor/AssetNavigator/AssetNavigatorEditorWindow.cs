@@ -32,7 +32,7 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
 
         public void OnGUI(Rect rect)
         {
-            IsOn = EditorGUILayout.ToggleLeft(GUIContent.none, IsOn);
+            IsOn = EditorGUILayout.ToggleLeft(_content, IsOn);
         }
     }
 
@@ -62,8 +62,10 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
         //private Menu _menu;
 
         //↑ old
+        
 
         private int menuIndex;
+        [SerializeReference] 
         private IMenuItem[] menuItems;
         private GUIContent[] menuGUIContents;
 
@@ -91,7 +93,7 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
 
         private void OnDisable()
         {
-            CustomAssetModificationProcessor.SaveAssetIfDirty(_assetNavigatorData);
+            
         }
 
         private int aa;
@@ -145,17 +147,6 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
                 EditorGUILayout.EndHorizontal();
             }
 
-            var aa1 = new GUIContent();
-
-            aa1.text = "1";
-            GUILayout.Label(aa1);
-
-
-            aa1.text = "2";
-            GUILayout.Label(aa1);
-
-            aa1.text = "3";
-            GUILayout.Label(aa1);
 
             // ↓ old
 
@@ -247,7 +238,6 @@ namespace Cofdream.ToolKitEditor.AssetNavigator
                 menuGUIContents[i] = menuItems[i].GUIContent;
             }
         }
-
 
 
         //private void DrawContent()

@@ -1,6 +1,8 @@
+using Cofdream.ToolKitEditor.AssetNavigator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace Cofdream.ToolKitEditor
@@ -39,6 +41,8 @@ namespace Cofdream.ToolKitEditor
             _keys = Dictionary.Keys.ToArray();
             _values = Dictionary.Values.ToArray();
             Dictionary.Clear();
+
+            CustomAssetModificationProcessor.SaveAssetIfDirty(this);
         }
     }
 }

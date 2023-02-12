@@ -82,22 +82,25 @@ namespace Cofdream.ToolKitEditor
         }
 
 
+        public static void PinScript<T>(this T t, GenericMenu menu) where T : EditorWindow, IHasCustomMenu
+        {
+            menu.AddItem(EditorGUIUtility.TrTextContent("Pin Script"), false, PinScript, t);
+        }
+        private static void PinScript(object userData)
+        {
+            EditorGUIUtility.PingObject(((UnityEngine.Object)userData)?.GetScript());
+        }
+
         public static void EditScript<T>(this T t, GenericMenu menu) where T : EditorWindow, IHasCustomMenu
         {
             menu.AddItem(EditorGUIUtility.TrTextContent("Edit Script"), false, OpenEditScript, t);
         }
         private static void OpenEditScript(object userData)
         {
-            SerializedObject serializedObject = new SerializedObject((UnityEngine.Object)userData);
-            SerializedProperty m_Script = serializedObject.FindProperty("m_Script");
-            var obj = m_Script.objectReferenceValue;
-            if (obj == null)
+            var script = ((UnityEngine.Object)userData)?.GetScript();
+            if (AssetDatabase.OpenAsset(script) == false)
             {
-                obj = (UnityEngine.Object)userData;
-            }
-            if (AssetDatabase.OpenAsset(obj) == false)
-            {
-                Debug.LogError($"打开 {userData.GetType().FullName} 失败");
+                Debug.LogError($"打开 {userData?.GetType().FullName} 失败");
             }
         }
     }
