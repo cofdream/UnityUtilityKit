@@ -30,8 +30,6 @@ namespace Cofdream.ToolKitEditor
                 EditorApplication.UnlockReloadAssemblies();
             }
             EditorApplication.playModeStateChanged += PlayModeStateChangedCallback;
-
-            MainToolbarExtensions.DelayToolbarZoneRightAlign.Add(CreateVisualElement());
         }
 
         private static void PlayModeStateChangedCallback(PlayModeStateChange state)
@@ -86,7 +84,8 @@ namespace Cofdream.ToolKitEditor
             Menu.SetChecked(MENU_ITEM_KEY, LockReloadAssemblies);
         }
 
-        private static VisualElement CreateVisualElement()
+        [DelayCall]
+        private static void CreateMainToolbarVisualElement()
         {
             _lock = new Button();
             _lock.name = $"Lock{nameof(ReloadAssemblies)}";
@@ -132,7 +131,7 @@ namespace Cofdream.ToolKitEditor
 
             SetLockImageDisplay();
 
-            return _lock;
+            MainToolbarExtensions.ToolbarZoneRightAlign.Add(_lock);
         }
 
         private static void OnClickLock()
