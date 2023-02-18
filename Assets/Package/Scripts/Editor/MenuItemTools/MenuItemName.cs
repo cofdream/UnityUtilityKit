@@ -5,7 +5,8 @@ namespace Cofdream.ToolKitEditor
     {
         public const string ToolKit = "ToolKit/";
 
-        public const string UGUI = "UGUI/";
-        public const string Infrequently = "Infrequently/";
+        public const string UGUI = ToolKit + "UGUI/";
+        public const string Infrequently = ToolKit + "Infrequently/";
+        public const string Other = ToolKit + "Other/";
     }
 }
