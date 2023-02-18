@@ -751,34 +751,4 @@ namespace Cofdream.ToolKitEditor
             editor.Copy();
         }
     }
-
-
-    public class ExampleWindow : EditorWindow
-    {
-        float sliderValue = 0;
-        string labelText = "-";
-
-        [MenuItem("Window/Example Window")]
-        static void Init()
-        {
-            var example = (ExampleWindow)EditorWindow.GetWindow(typeof(ExampleWindow));
-            example.Show();
-        }
-
-        void OnGUI()
-        {
-            EditorGUILayout.LabelField("New value", labelText);
-
-            // Start a code block to check for GUI changes
-            EditorGUI.BeginChangeCheck();
-
-            sliderValue = EditorGUILayout.Slider(sliderValue, 0, 1);
-
-            // End the code block and update the label if a change occurred
-            if (EditorGUI.EndChangeCheck())
-            {
-                labelText = sliderValue.ToString();
-            }
-        }
-    }
 }

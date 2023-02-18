@@ -17,11 +17,11 @@ MonoBehaviour:
   SelectTypePopupWindowRect:
     serializedVersion: 2
     x: 3
-    y: 85
-    width: 315
+    y: 107
+    width: 551
     height: 18
-  SelectedObjectDictionary: {fileID: 8010199808491383950}
---- !u!114 &8010199808491383950
+  SelectedObjectDictionary: {fileID: 6276880083991407818}
+--- !u!114 &6276880083991407818
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -36,11 +36,4 @@ MonoBehaviour:
   _keys: []
   _values:
   - IsOn: 0
-    Object: {fileID: 5897886265953266890, guid: 865c9991d0d1dd44a98b6ff71618ad00,
-      type: 3}
-  - IsOn: 0
-    Object: {fileID: 102900000, guid: 9fa200b923447dd42815321684ba92da, type: 3}
-  - IsOn: 0
-    Object: {fileID: 102900000, guid: 3bf0f860aad6070489fcfc412f9a3ea0, type: 3}
-  - IsOn: 0
-    Object: {fileID: 11500000, guid: 41e371e6a0db3eb4bbfa52f20f049c4f, type: 3}
+    Object: {fileID: 11500000, guid: 7141388f483cdf944b58f9d1523fa7ee, type: 3}
