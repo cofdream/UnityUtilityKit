@@ -11,12 +11,11 @@ namespace Cofdream.ToolKitEditor
     /// </summary>
     public class SundriesKit
     {
-        private const string HEAD = MenuItemName.ToolKit + "杂物/";
 
         #region XXXX后播放
         private const string IS_PLAY_EDITOR_AFTER_COMPILATION = "ISPlayEditorAfterCompilation";
 
-        [MenuItem(HEAD + "触发脚本编译,结束后自动播放")]
+        [MenuItem(MenuItemName.Other + "触发脚本编译,结束后自动播放")]
         private static void RequestScriptCompilation()
         {
             EditorPrefs.SetBool(IS_PLAY_EDITOR_AFTER_COMPILATION, true);
@@ -34,52 +33,17 @@ namespace Cofdream.ToolKitEditor
         }
         #endregion
 
-        [MenuItem(HEAD + "刷新资源并播放")]
+        [MenuItem(MenuItemName.Other + "刷新资源并播放")]
         private static void RefreshAndPlay()
         {
             AssetDatabase.Refresh();
             EditorApplication.EnterPlaymode();
         }
 
-        [MenuItem(HEAD + "Resources.UnloadUnusedAssets")]
+        [MenuItem(MenuItemName.Other + "Resources.UnloadUnusedAssets")]
         private static void UnloadUnusedAssets()
         {
             Resources.UnloadUnusedAssets();
-        }
-
-        private const string HEAD2 = "杂物/";
-        [MenuItem(HEAD2 + "Resources.Test")]
-        private static void Test()
-        {
-            var guids = AssetDatabase.FindAssets(".asset", new string[] { "" });
-            List<string> allAsset = new List<string>(guids.Length);
-            foreach (var item in guids)
-            {
-                allAsset.Add(AssetDatabase.GUIDToAssetPath(item));
-            }
-
-            var stopwatch = new System.Diagnostics.Stopwatch();
-
-
-            stopwatch.Start();
-            foreach (var item in allAsset)
-            {
-                var go = AssetDatabase.LoadAssetAtPath<Object>(item);
-                Resources.UnloadAsset(go);
-            }
-            stopwatch.Stop();
-            Debug.LogWarning($"UnloadAsset Use Time : {stopwatch.ElapsedMilliseconds}ms,  Check Time {stopwatch.ElapsedMilliseconds}ms");
-
-
-            stopwatch.Start();
-            foreach (var item in allAsset)
-            {
-                var go = AssetDatabase.LoadAssetAtPath<Object>(item);
-            }
-            Resources.UnloadUnusedAssets();
-
-            stopwatch.Stop();
-            Debug.LogWarning($"UnloadUnusedAssets Use Time : {stopwatch.ElapsedMilliseconds}ms,  Check Time {stopwatch.ElapsedMilliseconds}ms");
         }
     }
 }
