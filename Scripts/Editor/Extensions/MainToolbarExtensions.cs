@@ -8,36 +8,24 @@ using UnityEditor.UIElements;
 
 namespace Cofdream.ToolKitEditor
 {
-    [InitializeOnLoad]
     public static class MainToolbarExtensions
     {
         public static VisualElement ToolbarZoneLeftAlign { get; private set; }
         public static VisualElement ToolbarZonePlayMode { get; private set; }
         public static VisualElement ToolbarZoneRightAlign { get; private set; }
 
-        public static List<VisualElement> DelayToolbarZoneLeftAlign { get; private set; }
-        public static List<VisualElement> DelayToolbarZonePlayMode { get; private set; }
-        public static List<VisualElement> DelayToolbarZoneRightAlign { get; private set; }
-        
+        private static List<VisualElement> _delazyToolbarZoneLeftAlign = new List<VisualElement>();
+        private static List<VisualElement> _delazyToolbarZonePlayMode = new List<VisualElement>();
+        private static List<VisualElement> _delazyToolbarZoneRightAlign = new List<VisualElement>();
+
+
+
         static MainToolbarExtensions()
         {
-            TryToobarVisualElement();
-
-            if (ToolbarZoneLeftAlign == null || ToolbarZonePlayMode == null || ToolbarZoneRightAlign == null)
-            {
-                DelayToolbarZoneLeftAlign = new List<VisualElement>();
-                DelayToolbarZonePlayMode = new List<VisualElement>();
-                DelayToolbarZoneRightAlign = new List<VisualElement>();
-
-                EditorApplication.delayCall += DelayCall;
-            }
-            else
-            {
-                DelayCall();
-            }
+            EditorApplication.update += Update;
         }
 
-        private static void TryToobarVisualElement()
+        private static void LoadToobarVisualElement()
         {
             var toolbarType = typeof(Editor).Assembly.GetType("UnityEditor.Toolbar");
             var getField = toolbarType?.GetField("get", BindingFlags.Public | BindingFlags.Static);
@@ -68,28 +56,64 @@ namespace Cofdream.ToolKitEditor
             }
         }
 
-        private static void DelayCall()
+        private static void Update()
         {
-            EditorApplication.delayCall -= DelayCall;
-
-            TryToobarVisualElement();
-
-            foreach (var item in DelayToolbarZoneLeftAlign)
+            try
             {
-                ToolbarZoneLeftAlign.Add(item);
-            }
-            foreach (var item in DelayToolbarZonePlayMode)
-            {
-                ToolbarZonePlayMode.Add(item);
-            }
-            foreach (var item in DelayToolbarZoneRightAlign)
-            {
-                ToolbarZoneRightAlign.Add(item);
-            }
+                if (ToolbarZoneLeftAlign == null || ToolbarZonePlayMode == null || ToolbarZoneRightAlign == null)
+                {
+                    LoadToobarVisualElement();
+                }
 
-            DelayToolbarZoneLeftAlign = null;
-            DelayToolbarZonePlayMode = null;
-            DelayToolbarZoneRightAlign = null;
+                if (ToolbarZoneLeftAlign != null && ToolbarZonePlayMode != null && ToolbarZoneRightAlign != null)
+                {
+                    EditorApplication.update -= Update;
+
+                    foreach (var item in _delazyToolbarZoneLeftAlign)
+                    {
+                        ToolbarZoneLeftAlign.Add(item);
+                    }
+                    _delazyToolbarZoneLeftAlign = null;
+
+                    foreach (var item in _delazyToolbarZonePlayMode)
+                    {
+                        ToolbarZonePlayMode.Add(item);
+                    }
+                    _delazyToolbarZonePlayMode = null;
+
+                    foreach (var item in _delazyToolbarZoneRightAlign)
+                    {
+                        ToolbarZoneRightAlign.Add(item);
+                    }
+                    _delazyToolbarZoneRightAlign = null;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+
+        public static void AddToolbarZoneLeftAlign(VisualElement element)
+        {
+            if (ToolbarZoneLeftAlign == null)
+                _delazyToolbarZoneLeftAlign.Add(element);
+            else
+                ToolbarZoneLeftAlign.Add(element);
+        }
+        public static void AddToolbarZonePlayMode(VisualElement element)
+        {
+            if (ToolbarZonePlayMode == null)
+                _delazyToolbarZonePlayMode.Add(element);
+            else
+                ToolbarZonePlayMode.Add(element);
+        }
+        public static void AddToolbarZoneRightAlign(VisualElement element)
+        {
+            if (ToolbarZoneRightAlign == null)
+                _delazyToolbarZoneRightAlign.Add(element);
+            else
+                ToolbarZoneRightAlign.Add(element);
         }
     }
 }

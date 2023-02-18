@@ -81,31 +81,5 @@ namespace Cofdream.ToolKitEditor
             stopwatch.Stop();
             Debug.LogWarning($"UnloadUnusedAssets Use Time : {stopwatch.ElapsedMilliseconds}ms,  Check Time {stopwatch.ElapsedMilliseconds}ms");
         }
-
-        [MenuItem(HEAD2 + "2222")]
-        private static void Test22()
-        {
-            //var s = AssetDatabase.GetTextMetaFilePathFromAssetPath("Assets/_A_WorkData/ToolData.asset");
-            // var s2= AssetDatabase.GetTextMetaFilePathFromAssetPath("Assests/_A_WorkData/ToolDasdata2.sset");
-
-            // Debug.Log(s);
-
-            // Debug.Log(s2);
-
-          var obj =  AssetDatabase.LoadAssetAtPath<GameObject>("asds");
-            Debug.Log(obj);
-
-            var path = "Assets/_A_WorkData";
-            if (AssetDatabase.IsValidFolder(path))
-            {
-                var s = AssetDatabase.FindAssets("", new string[] { path });
-                foreach (var item in s)
-                {
-                    Debug.Log(item);
-                }
-            }
-            Debug.Log("asda\ndasd");
-            
-        }
     }
 }

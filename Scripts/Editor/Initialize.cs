@@ -1,13 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System;
-using UnityEngine.Assertions.Must;
-using System.Linq;
-using UnityEditor.Compilation;
-using NUnit.Framework.Internal;
 
 namespace Cofdream.ToolKitEditor
 {
@@ -24,10 +19,15 @@ namespace Cofdream.ToolKitEditor
     [AttributeUsage(AttributeTargets.Method)]
     public class DelayCallAttribute : Attribute { }
 
+    [AttributeUsage(AttributeTargets.Method)]
+    public class UpdateAttribute : Attribute { }
+
 
     [UnityEditor.InitializeOnLoad]
     internal static class Initialize
     {
+        private static MethodInfo[] _updateMethodInfoSet;
+
         static Initialize()
         {
             //foreach (var type in TypeCache.GetTypesWithAttribute<InitializeOnLoadAttribute>())
@@ -66,8 +66,41 @@ namespace Cofdream.ToolKitEditor
             //        Debug.LogError($"调用 {nameof(InitializeOnLoadMethodAttribute)} \n{method.Name} Exception:\n{e}");
             //    }
             //}
+        }
 
+        [InitializeOnLoadMethod]
+        private static void BindDelayCall()
+        {
             EditorApplication.delayCall += DelayCall;
+            EditorApplication.update += Update;
+
+            _updateMethodInfoSet = GetUpdateMethodInfo();
+        }
+
+        private static MethodInfo[] GetUpdateMethodInfo()
+        {
+            List<MethodInfo> methodInfos = new List<MethodInfo>();
+            foreach (var method in TypeCache.GetMethodsWithAttribute<UpdateAttribute>())
+            {
+                if (method.ContainsGenericParameters)
+                {
+                    Debug.LogError($"不能对泛型函数添加: {nameof(UpdateAttribute)} \n{method.Name}");
+                    continue;
+                }
+
+                if (method.GetParameters().Length > 0)
+                {
+                    Debug.LogError($"不能对带有参数的函数添加: {nameof(UpdateAttribute)} \n{method.Name}");
+                    continue;
+                }
+                if (method.IsStatic == false)
+                {
+                    Debug.LogError($"不能对非静态函数添加: {nameof(UpdateAttribute)} \n{method.Name}");
+                    continue;
+                }
+                methodInfos.Add(method);
+            }
+            return methodInfos.ToArray();
         }
 
         private static void DelayCall()
@@ -102,7 +135,23 @@ namespace Cofdream.ToolKitEditor
                 }
             }
         }
-   
+
+        private static void Update()
+        {
+            foreach (var item in _updateMethodInfoSet)
+            {
+                try
+                {
+                    item.Invoke(null, null);
+                }
+                catch (Exception e)
+                {
+
+                    Debug.LogError($"调用 {nameof(UpdateAttribute)} \n{item.Name} Exception:\n{e}");
+                }
+            }
+        }
+
 
         //[UnityEditor.InitializeOnLoadMethod]
         //private static void InitializeOnLoad()
