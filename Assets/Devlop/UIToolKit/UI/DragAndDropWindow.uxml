@@ -1,0 +1,14 @@
+<!--<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Devlop/UIToolKit/UI/DragAndDropWindow.uss?fileID=12385&amp;guid=0000000000000000e000000000000000&amp;type=0" />
+    <ui:VisualElement name="slots">
+        <ui:VisualElement name="slot_row1" class="slot_row">
+            <ui:VisualElement name="slot1" class="slot" />
+            <ui:VisualElement name="slot2" class="slot" />
+        </ui:VisualElement>
+        <ui:VisualElement name="slot_row2" class="slot_row">
+            <ui:VisualElement name="slot1" class="slot" />
+            <ui:VisualElement name="slot2" class="slot" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="object" class="object" />
+</ui:UXML>-->

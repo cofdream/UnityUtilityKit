@@ -15,6 +15,8 @@ class TestSceneFilterEngine : ISceneSearchEngine
     public void BeginSession(ISearchContext context)
     {
         Debug.Log("BeginSession Done." + context.ToString());
+
+        
     }
 
     public void EndSession(ISearchContext context)
