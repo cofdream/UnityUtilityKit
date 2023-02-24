@@ -1,0 +1,89 @@
+﻿.root {
+	margin: 2px;
+
+	border-width: 2px;
+}
+
+.background {
+
+	/*position: absolute;*/
+
+	-unity-slice-top: 1;
+	-unity-slice-bottom: 1;
+	-unity-slice-left: 1;
+	-unity-slice-right: 1;
+
+	/*width: 20px;*/
+	/*height: 22px;*/
+}
+
+
+.head {
+	/* 水平居中布局 */
+/*	align-items: center;
+	justify-content: center;*/
+	flex-direction: row;
+
+	height: 22px;
+
+	-unity-slice-top: 1;
+	-unity-slice-bottom: 1;
+	-unity-slice-left: 1;
+	-unity-slice-right: 1;
+	
+	border-width: 2px;
+
+	/*border-color: white;*/
+}
+
+.head-lable {
+
+	color: #000000;
+	font-size: 13px;
+	/*-unity-font-style: bold;*/
+	/*opacity: 1;*/
+	flex-grow: 1;
+
+}
+
+
+.head-size {
+	/*align-content: flex-end;
+	align-items: flex-end;
+	align-self: flex-end;
+
+	justify-content: flex-end;*/
+
+	color: #000000;
+	font-size: 13px;
+	/*-unity-font-style: bold;*/
+	/*opacity: 1;*/
+	/*flex-grow: 1;*/
+/*
+	min-width: 40px;
+	
+	width: 60px;
+	height: 18px;*/
+
+	margin-left: 20px;
+}
+
+
+.options {
+/*	align-content: flex-end;*/
+	/*align-items: flex-end;*/
+	/*align-self: flex-end;*/
+
+	flex-direction: row;
+
+	/*justify-content: flex-end;*/
+}
+
+.options-button {
+	width: 20px;
+}
+	
+
+.element {
+
+}
