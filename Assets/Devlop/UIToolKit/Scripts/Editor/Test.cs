@@ -1429,66 +1429,66 @@ namespace Cofdream.Editor
 
 
 
-public class CheckResule
-{
-    public string Info;
-    public string Changers;
-}
+//public class CheckResule
+//{
+//    public string Info;
+//    public string Changers;
+//}
 
-public abstract class ConfigCheck
-{
-    public abstract List<CheckResule> StartResourcesCheck();
-}
+//public abstract class ConfigCheck
+//{
+//    public abstract List<CheckResule> StartResourcesCheck();
+//}
 
-public class ExcleConfigCheck : ConfigCheck
-{
-    public override List<CheckResule> StartResourcesCheck()
-    {
-        var resuleSet = new List<CheckResule>();
+//public class ExcleConfigCheck : ConfigCheck
+//{
+//    public override List<CheckResule> StartResourcesCheck()
+//    {
+//        var resuleSet = new List<CheckResule>();
 
-        // todo 配置检查
+//        // todo 配置检查
 
-        var resule = new CheckResule();
-        resuleSet.Add(resule);
+//        var resule = new CheckResule();
+//        resuleSet.Add(resule);
 
-        resule.Info = " buff 配置表 123行 123列 配置错误,请修复！";
-        resule.Changers = "最后提交人: Admin";
+//        resule.Info = " buff 配置表 123行 123列 配置错误,请修复！";
+//        resule.Changers = "最后提交人: Admin";
 
-        return resuleSet;
-    }
-}
+//        return resuleSet;
+//    }
+//}
 
-public static class ConfigCheckTools
-{
-    [MSMenuItem_P("资源校验/全部校验")]
-    public static void AllConfigCheck()
-    {
-        var stopwatch = new System.Diagnostics.Stopwatch();
-        stopwatch.Start();
+//public static class ConfigCheckTools
+//{
+//    [MSMenuItem_P("资源校验/全部校验")]
+//    public static void AllConfigCheck()
+//    {
+//        var stopwatch = new System.Diagnostics.Stopwatch();
+//        stopwatch.Start();
 
-        var resuleSet = new List<List<CheckResule>>();
-        var typeSet = TypeCache.GetTypesDerivedFrom<ConfigCheck>();
-        foreach (var item in typeSet)
-        {
-            if (Activator.CreateInstance(item) is ConfigCheck configCheck)
-            {
-                var stepStopwatch = new System.Diagnostics.Stopwatch();
-                stepStopwatch.Restart();
+//        var resuleSet = new List<List<CheckResule>>();
+//        var typeSet = TypeCache.GetTypesDerivedFrom<ConfigCheck>();
+//        foreach (var item in typeSet)
+//        {
+//            if (Activator.CreateInstance(item) is ConfigCheck configCheck)
+//            {
+//                var stepStopwatch = new System.Diagnostics.Stopwatch();
+//                stepStopwatch.Restart();
 
-                var resule = configCheck.StartResourcesCheck();
+//                var resule = configCheck.StartResourcesCheck();
 
-                stepStopwatch.Stop();
-                Debug.Log($"配置检查[{item.Name}] 耗时: {stepStopwatch.ElapsedMilliseconds} ms");
+//                stepStopwatch.Stop();
+//                Debug.Log($"配置检查[{item.Name}] 耗时: {stepStopwatch.ElapsedMilliseconds} ms");
 
-                resuleSet.Add(resule);
-            }
-        }
+//                resuleSet.Add(resule);
+//            }
+//        }
 
-        stopwatch.Stop();
-        Debug.Log($"配置检查总耗时: {stopwatch.ElapsedMilliseconds} ms");
+//        stopwatch.Stop();
+//        Debug.Log($"配置检查总耗时: {stopwatch.ElapsedMilliseconds} ms");
 
-        // TODO 检查是否修复了，然后关单
+//        // TODO 检查是否修复了，然后关单
 
-        // TODO 提单
-    }
-}
+//        // TODO 提单
+//    }
+//}
