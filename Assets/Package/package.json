@@ -1,6 +1,6 @@
 {
     "name": "com.cofdream.toolkit",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "displayName": "ToolKit",
     "description": "This is an editor tool kit.",
     "unity": "2019.1"
