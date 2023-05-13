@@ -13,10 +13,6 @@ namespace Cofdream.ToolKitEditor
 
         internal static bool LockReloadAssemblies;
 
-        private static Button _lock;
-        private static Image _lockOff;
-        private static Image _lockOn;
-       
         static ReloadAssemblies()
         {
             LockReloadAssemblies = EditorPrefs.GetBool(LOCK_KEY, false);
@@ -88,11 +84,11 @@ namespace Cofdream.ToolKitEditor
 
         private static void CreateMainToolbarVisualElement()
         {
-            _lock = new Button();
-            _lock.name = $"Lock{nameof(ReloadAssemblies)}";
+            var lockButton = new Button();
+            lockButton.name = $"Lock{nameof(ReloadAssemblies)}";
 
             var backgroundImage = new Image();
-            _lock.Add(backgroundImage);
+            lockButton.Add(backgroundImage);
             backgroundImage.name = "background";
             backgroundImage.style.backgroundImage = EditorGUIUtilityExtensions.LoadIconRequired("AssemblyDefinitionAsset Icon");
             backgroundImage.style.overflow = Overflow.Visible;
@@ -101,51 +97,49 @@ namespace Cofdream.ToolKitEditor
             backgroundImage.style.width = 16f;
             backgroundImage.style.height = 16f;
 
-            _lockOff = new Image();
-            _lock.Add(_lockOff);
-            _lockOff.name = "lock off";
-            _lockOff.style.backgroundImage = EditorGUIUtilityExtensions.LoadIconRequired("IN LockButton");
-            _lockOff.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
-            _lockOff.style.alignSelf = Align.Center;
-            _lockOff.style.width = 16f;
-            _lockOff.style.height = 16f;
+            var lockOff = new Image();
+            lockButton.Add(lockOff);
+            lockOff.name = "lock off";
+            lockOff.style.backgroundImage = EditorGUIUtilityExtensions.LoadIconRequired("IN LockButton");
+            lockOff.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
+            lockOff.style.alignSelf = Align.Center;
+            lockOff.style.width = 16f;
+            lockOff.style.height = 16f;
 
-            _lockOn = new Image();
-            _lock.Add(_lockOn);
-            _lockOn.name = "lock on";
-            _lockOn.style.backgroundImage = EditorGUIUtilityExtensions.LoadIconRequired("IN LockButton on");
-            _lockOn.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
-            _lockOn.style.alignSelf = Align.Center;
-            _lockOn.style.width = 16f;
-            _lockOn.style.height = 16f;
-
-
-            _lockOff.style.display = LockReloadAssemblies ? DisplayStyle.Flex : DisplayStyle.None;
-            _lockOn.style.display = !LockReloadAssemblies ? DisplayStyle.Flex : DisplayStyle.None;
+            var lockOn = new Image();
+            lockButton.Add(lockOn);
+            lockOn.name = "lock on";
+            lockOn.style.backgroundImage = EditorGUIUtilityExtensions.LoadIconRequired("IN LockButton on");
+            lockOn.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
+            lockOn.style.alignSelf = Align.Center;
+            lockOn.style.width = 16f;
+            lockOn.style.height = 16f;
 
 
-            _lock.style.backgroundColor = new Color(56f / 255f, 56f / 255f, 56f / 255f, 255f / 255f);
-            _lock.style.overflow = Overflow.Visible;
-            _lock.style.flexDirection = FlexDirection.Row;
+            lockOff.style.display = LockReloadAssemblies ? DisplayStyle.Flex : DisplayStyle.None;
+            lockOn.style.display = !LockReloadAssemblies ? DisplayStyle.Flex : DisplayStyle.None;
 
-            _lock.clicked += OnClickLock;
+
+            lockButton.style.backgroundColor = new Color(56f / 255f, 56f / 255f, 56f / 255f, 255f / 255f);
+            lockButton.style.overflow = Overflow.Visible;
+            lockButton.style.flexDirection = FlexDirection.Row;
+
+            lockButton.clicked += () =>
+            {
+                SetLockReloadAssemblies();
+                SetLockImageDisplay();
+            };
+
+            void SetLockImageDisplay()
+            {
+                lockOff.style.display = LockReloadAssemblies ? DisplayStyle.None : DisplayStyle.Flex;
+                lockOn.style.display = LockReloadAssemblies ? DisplayStyle.Flex : DisplayStyle.None;
+                lockButton.tooltip = $"锁定程序集编译\n当前状态：{(LockReloadAssemblies ? "锁定编译" : "开启编译")}";
+            }
 
             SetLockImageDisplay();
 
-            MainToolbarExtensions.AddToolbarZoneRightAlign(_lock);
-        }
-
-        private static void OnClickLock()
-        {
-            SetLockReloadAssemblies();
-            SetLockImageDisplay();
-        }
-
-        private static void SetLockImageDisplay()
-        {
-            _lockOff.style.display = LockReloadAssemblies ? DisplayStyle.None : DisplayStyle.Flex;
-            _lockOn.style.display = LockReloadAssemblies ? DisplayStyle.Flex : DisplayStyle.None;
-            _lock.tooltip = $"锁定程序集编译\n当前状态：{(LockReloadAssemblies ? "锁定编译" : "开启编译")}";
+            MainToolbarExtensions.ToolbarZoneRightAlign.Add(lockButton);
         }
     }
 }
