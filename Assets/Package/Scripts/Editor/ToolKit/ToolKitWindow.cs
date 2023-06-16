@@ -34,7 +34,7 @@ namespace Cofdream.ToolKitEditor
 
         private string _singleRootPath;
 
-        
+
         [SerializeField] private ToolData _toolData;
 
         [SerializeField] public int _sceneAssetIconSize;
@@ -42,6 +42,9 @@ namespace Cofdream.ToolKitEditor
 
         [SerializeField] private bool _isDisplayOpenProjectTool;
         [SerializeField] private ProjectInfoGroup _projectInfoGroup;
+
+        [SerializeField]
+        private Vector3 _scrollViewPosition;
 
         private void OnEnable()
         {
@@ -83,126 +86,154 @@ namespace Cofdream.ToolKitEditor
 
         private void OnGUI()
         {
-
-            if (GUILayout.Button("close"))
+            _scrollViewPosition = EditorGUILayout.BeginScrollView(_scrollViewPosition);
             {
-                Close();
-            }
 
+                DrawAllSceneData();
+
+                EditorGUILayout.BeginVertical(Style._categoryBox);
+                {
+                    _isDisplayOpenProjectTool = EditorGUILayout.BeginFoldoutHeaderGroup(_isDisplayOpenProjectTool, "Open Project Tool");
+                    {
+                        if (_isDisplayOpenProjectTool)
+                        {
+                            foreach (var projectInfoGroups in _projectInfoGroup.ProjectInfoGroups)
+                            {
+
+                                EditorGUILayout.LabelField(projectInfoGroups.Key.Name);
+
+                                EditorGUI.BeginDisabledGroup(!projectInfoGroups.Key.Active);
+                                EditorGUILayout.BeginHorizontal();
+                                {
+                                    foreach (var item in projectInfoGroups.Value)
+                                    {
+                                        var active = Directory.Exists(item.Path) && File.Exists(item.UnityEnginePath);
+
+                                        EditorGUI.BeginDisabledGroup(!active);
+                                        {
+                                            Process process = null;
+                                            try
+                                            {
+                                                if (item.ProcessId != 0)
+                                                {
+                                                    process = Process.GetProcessById(item.ProcessId);
+                                                }
+
+                                            }
+                                            catch (System.Exception e)
+                                            {
+                                                SetProcessId(item, 0);
+
+                                                UnityEngine.Debug.LogError(e);
+                                            }
+
+                                            if (process == null)
+                                            {
+                                                if (GUILayout.Button($"{item.Name}", GUILayout.Width(120)))
+                                                {
+                                                    OpenProject(item);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var color = GUI.contentColor;
+                                                GUI.contentColor = Color.cyan;
+                                                if (GUILayout.Button($"Close: {item.Name} PId: {item.ProcessId}", GUILayout.Width(200)))
+                                                {
+                                                    if (process.HasExited == false)
+                                                    {
+                                                        try
+                                                        {
+                                                            process.Kill();
+                                                        }
+                                                        catch (System.Exception e)
+                                                        {
+                                                            UnityEngine.Debug.LogError(e);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        EditorUtility.DisplayDialog("Tips!", $"进程已经被其他方式给退出了！！\n分组: {projectInfoGroups.Key.Name}\n工程: {item.Name} 进程Id: {item.ProcessId}", "OK");
+                                                    }
+
+                                                    SetProcessId(item, 0);
+                                                }
+                                                GUI.contentColor = color;
+                                            }
+                                        }
+                                        EditorGUI.EndDisabledGroup();
+                                    }
+                                }
+                                EditorGUILayout.EndHorizontal();
+                                EditorGUI.EndDisabledGroup();
+                            }
+                        }
+                    }
+                    EditorGUILayout.EndFoldoutHeaderGroup();
+                }
+                EditorGUILayout.EndVertical();
+            }
+            EditorGUILayout.EndScrollView();
+        }
+
+        private void DrawAllSceneData()
+        {
             _sceneAssetIconSize = EditorGUILayout.IntField("Scene Asset Icon Size:", _sceneAssetIconSize);
+            EditorGUIUtility.SetIconSize(Vector2.one * _sceneAssetIconSize);
 
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUIUtility.SetIconSize(Vector2.one * _sceneAssetIconSize);
-                for (int i = 0; i < _toolData.SceneDatas.Count; i++)
+                foreach (var sceneData in _toolData.SceneDatas)
                 {
-                    var sceneData = _toolData.SceneDatas[i];
-                    if (GUILayout.Button(new GUIContent($" {sceneData.SceneName}", _sceneAssetIcon, $"Open Scene:{AssetDatabase.GetAssetPath(sceneData.SceneAsset)}"),
-                         GUILayout.ExpandWidth(false)))
-                    {
-                        // 播放状态检查
-                        if (EditorApplication.isPlayingOrWillChangePlaymode)
-                        {
-                            if (EditorUtility.DisplayDialog("无法打开新场景", "编辑器还在播放模式或是即将切换到播放模式", "退出播放模式", "取消"))
-                            {
-                                EditorApplication.isPlaying = false;
-                            }
-                            else
-                                return;
-                        }
-
-                        //EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
-
-                        EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(sceneData.SceneAsset), OpenSceneMode.Single);
-                    }
+                    DrawSceneButton(sceneData);
                 }
-                EditorGUIUtility.SetIconSize(Vector2.zero);
-
                 EditorGUILayout.Space(0, true);
             }
             EditorGUILayout.EndHorizontal();
 
+
             EditorGUILayout.BeginVertical(Style._categoryBox);
             {
-                _isDisplayOpenProjectTool = EditorGUILayout.BeginFoldoutHeaderGroup(_isDisplayOpenProjectTool, "Open Project Tool");
+                foreach (var groupData in _toolData.GroupDatas)
                 {
-                    if (_isDisplayOpenProjectTool)
+                    groupData.IsFold = EditorGUILayout.BeginFoldoutHeaderGroup(groupData.IsFold, groupData.GroupName);
+                    if (groupData.IsFold)
                     {
-                        foreach (var projectInfoGroups in _projectInfoGroup.ProjectInfoGroups)
+                        EditorGUILayout.BeginHorizontal();
+                        foreach (var sceneData in groupData.SceneDatas)
                         {
-
-                            EditorGUILayout.LabelField(projectInfoGroups.Key.Name);
-
-                            EditorGUI.BeginDisabledGroup(!projectInfoGroups.Key.Active);
-                            EditorGUILayout.BeginHorizontal();
-                            {
-                                foreach (var item in projectInfoGroups.Value)
-                                {
-                                    var active = Directory.Exists(item.Path) && File.Exists(item.UnityEnginePath);
-
-                                    EditorGUI.BeginDisabledGroup(!active);
-                                    {
-                                        Process process = null;
-                                        try
-                                        {
-                                            if (item.ProcessId != 0)
-                                            {
-                                                process = Process.GetProcessById(item.ProcessId);
-                                            }
-
-                                        }
-                                        catch (System.Exception e)
-                                        {
-                                            SetProcessId(item, 0);
-
-                                            UnityEngine.Debug.LogError(e);
-                                        }
-
-                                        if (process == null)
-                                        {
-                                            if (GUILayout.Button($"{item.Name}", GUILayout.Width(120)))
-                                            {
-                                                OpenProject(item);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            var color = GUI.contentColor;
-                                            GUI.contentColor = Color.cyan;
-                                            if (GUILayout.Button($"Close: {item.Name} PId: {item.ProcessId}", GUILayout.Width(200)))
-                                            {
-                                                if (process.HasExited == false)
-                                                {
-                                                    try
-                                                    {
-                                                        process.Kill();
-                                                    }
-                                                    catch (System.Exception e)
-                                                    {
-                                                        UnityEngine.Debug.LogError(e);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    EditorUtility.DisplayDialog("Tips!", $"进程已经被其他方式给退出了！！\n分组: {projectInfoGroups.Key.Name}\n工程: {item.Name} 进程Id: {item.ProcessId}", "OK");
-                                                }
-
-                                                SetProcessId(item, 0);
-                                            }
-                                            GUI.contentColor = color;
-                                        }
-                                    }
-                                    EditorGUI.EndDisabledGroup();
-                                }
-                            }
-                            EditorGUILayout.EndHorizontal();
-                            EditorGUI.EndDisabledGroup();
+                            DrawSceneButton(sceneData);
                         }
+                        EditorGUILayout.EndHorizontal();
                     }
+                    EditorGUILayout.EndFoldoutHeaderGroup();
                 }
-                EditorGUILayout.EndFoldoutHeaderGroup();
             }
             EditorGUILayout.EndVertical();
+
+
+            EditorGUIUtility.SetIconSize(Vector2.zero);
+        }
+
+        private void DrawSceneButton(SceneData sceneData)
+        {
+            if (GUILayout.Button(new GUIContent($" {sceneData.SceneName}", _sceneAssetIcon, $"Open Scene:{AssetDatabase.GetAssetPath(sceneData.SceneAsset)}"), GUILayout.ExpandWidth(false)))
+            {
+                // 播放状态检查
+                if (EditorApplication.isPlayingOrWillChangePlaymode)
+                {
+                    if (EditorUtility.DisplayDialog("无法打开新场景", "编辑器还在播放模式或是即将切换到播放模式", "退出播放模式", "取消"))
+                    {
+                        EditorApplication.isPlaying = false;
+                    }
+                    else
+                        return;
+                }
+
+                //EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+
+                EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(sceneData.SceneAsset), OpenSceneMode.Single);
+            }
         }
 
         private void OpenProject(ProjectInfo projectInfo)
@@ -232,6 +263,7 @@ namespace Cofdream.ToolKitEditor
 
             thread.Start();
         }
+
 
         #region Visula Code Expand
 

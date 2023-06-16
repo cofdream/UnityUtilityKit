@@ -10,10 +10,15 @@ namespace Cofdream.ToolKitEditor
     {
         public List<SceneData> SceneDatas;
 
+        public List<GroupData> GroupDatas;
+
         private void OnEnable()
         {
             if (SceneDatas == null)
                 SceneDatas = new List<SceneData>();
+
+            if (GroupDatas == null)
+                GroupDatas = new List<GroupData>();
         }
 
         public void OnValidate()
@@ -25,7 +30,29 @@ namespace Cofdream.ToolKitEditor
                     item.SceneName = item.SceneAsset.name;
                 }
             }
+
+            foreach (var item in GroupDatas)
+            {
+                foreach (var sceneData in item.SceneDatas)
+                {
+                    if (string.IsNullOrEmpty(sceneData.SceneName) && sceneData.SceneAsset != null)
+                    {
+                        sceneData.SceneName = sceneData.SceneAsset.name;
+                    }
+                }
+            }
+
+            CustomAssetModificationProcessor.SaveAssetIfDirty(this);
         }
+    }
+
+    [System.Serializable]
+    public class GroupData
+    {
+        [HideInInspector]
+        public bool IsFold;
+        public string GroupName;
+        public List<SceneData> SceneDatas;
     }
 
     // Share Data
