@@ -6,8 +6,8 @@ namespace Cofdream.ToolKitEditor
     [System.Serializable]
     public class ProjectGroup : ScriptableObject
     {
+        public bool Active;
         public string Name;
-
         public ProjectInfo[] ProjectInfos;
 
         private void OnValidate()
