@@ -1,11 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Threading;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Cofdream.ToolKitEditor
 {
@@ -30,7 +34,7 @@ namespace Cofdream.ToolKitEditor
 
         private string _singleRootPath;
 
-
+        
         [SerializeField] private ToolData _toolData;
 
         [SerializeField] public int _sceneAssetIconSize;
@@ -79,6 +83,12 @@ namespace Cofdream.ToolKitEditor
 
         private void OnGUI()
         {
+
+            if (GUILayout.Button("close"))
+            {
+                Close();
+            }
+
             _sceneAssetIconSize = EditorGUILayout.IntField("Scene Asset Icon Size:", _sceneAssetIconSize);
 
             EditorGUILayout.BeginHorizontal();
@@ -120,72 +130,79 @@ namespace Cofdream.ToolKitEditor
                     {
                         foreach (var projectInfoGroups in _projectInfoGroup.ProjectInfoGroups)
                         {
+
                             EditorGUILayout.LabelField(projectInfoGroups.Key.Name);
 
+                            EditorGUI.BeginDisabledGroup(!projectInfoGroups.Key.Active);
                             EditorGUILayout.BeginHorizontal();
                             {
                                 foreach (var item in projectInfoGroups.Value)
                                 {
-                                    Process process = null;
-                                    try
-                                    {
-                                        if (item.ProcessId != 0)
-                                        {
-                                            process = Process.GetProcessById(item.ProcessId);
-                                        }
+                                    var active = Directory.Exists(item.Path) && File.Exists(item.UnityEnginePath);
 
-                                    }
-                                    catch (System.Exception e)
+                                    EditorGUI.BeginDisabledGroup(!active);
                                     {
-                                        item.ProcessId = 0;
-
-                                        UnityEngine.Debug.LogError(e);
-                                    }
-
-                                    if (process == null)
-                                    {
-                                        if (GUILayout.Button($"{item.Name}", GUILayout.Width(120)))
+                                        Process process = null;
+                                        try
                                         {
-                                            OpenProject(item);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var color = GUI.contentColor;
-                                        GUI.contentColor = Color.cyan;
-                                        if (GUILayout.Button($"Close: {item.Name} PId: {item.ProcessId}", GUILayout.Width(200)))
-                                        {
-                                            if (process.HasExited == false)
+                                            if (item.ProcessId != 0)
                                             {
-                                                try
-                                                {
-                                                    process.Kill();
-                                                }
-                                                catch (System.Exception e)
-                                                {
-                                                    UnityEngine.Debug.LogError(e);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                EditorUtility.DisplayDialog("Tips!", $"进程已经被其他方式给退出了！！\n分组: {projectInfoGroups.Key.Name}\n工程: {item.Name} 进程Id: {item.ProcessId}", "OK");
+                                                process = Process.GetProcessById(item.ProcessId);
                                             }
 
-                                            item.ProcessId = 0;
                                         }
-                                        GUI.contentColor = color;
+                                        catch (System.Exception e)
+                                        {
+                                            SetProcessId(item, 0);
+
+                                            UnityEngine.Debug.LogError(e);
+                                        }
+
+                                        if (process == null)
+                                        {
+                                            if (GUILayout.Button($"{item.Name}", GUILayout.Width(120)))
+                                            {
+                                                OpenProject(item);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var color = GUI.contentColor;
+                                            GUI.contentColor = Color.cyan;
+                                            if (GUILayout.Button($"Close: {item.Name} PId: {item.ProcessId}", GUILayout.Width(200)))
+                                            {
+                                                if (process.HasExited == false)
+                                                {
+                                                    try
+                                                    {
+                                                        process.Kill();
+                                                    }
+                                                    catch (System.Exception e)
+                                                    {
+                                                        UnityEngine.Debug.LogError(e);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    EditorUtility.DisplayDialog("Tips!", $"进程已经被其他方式给退出了！！\n分组: {projectInfoGroups.Key.Name}\n工程: {item.Name} 进程Id: {item.ProcessId}", "OK");
+                                                }
+
+                                                SetProcessId(item, 0);
+                                            }
+                                            GUI.contentColor = color;
+                                        }
                                     }
+                                    EditorGUI.EndDisabledGroup();
                                 }
                             }
                             EditorGUILayout.EndHorizontal();
+                            EditorGUI.EndDisabledGroup();
                         }
                     }
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
             EditorGUILayout.EndVertical();
-
-
         }
 
         private void OpenProject(ProjectInfo projectInfo)
@@ -203,17 +220,81 @@ namespace Cofdream.ToolKitEditor
 
                 process.Start();
 
-                projectInfo.ProcessId = process.Id;
+                SetProcessId(projectInfo, process.Id);
 
                 process.StandardOutput.ReadToEnd();
 
                 process.WaitForExit();
                 process.Close();
 
-                projectInfo.ProcessId = 0;
+                SetProcessId(projectInfo, 0);
             });
 
             thread.Start();
         }
+
+        #region Visula Code Expand
+
+        [System.Serializable]
+        private class Launch
+        {
+            [System.Serializable]
+            public class Configuration
+            {
+                public string type = "emmylua_attach";
+                public string request = "attach";
+                public string name = "Attach by process id";
+                public int pid = 0;
+                public string processName = "";
+                public bool captureLog = false;
+            }
+
+            public string version = "0.2.0";
+            public List<Configuration> configurations = new List<Configuration>() { new Configuration() };
+        }
+
+
+        private static void SetProcessId(ProjectInfo info, int processId)
+        {
+            info.ProcessId = processId;
+
+            string projectPath = info.Path;
+            string visualCodeRelativePath = $"{projectPath}/Assets/BundleResources/Text/.vscode";
+
+            if (Directory.Exists(visualCodeRelativePath) == false)
+            {
+                return;
+            }
+
+            string jsonPath = $"{visualCodeRelativePath}/launch.json";
+            Launch launch;
+            if (File.Exists(jsonPath) == false)
+            {
+                launch = new Launch();
+            }
+            else
+            {
+                var launchJson = File.ReadAllText(jsonPath);
+                launch = JsonUtility.FromJson<Launch>(launchJson);
+                if (launchJson == null)
+                {
+                    UnityEngine.Debug.LogError($"读取 Visual Code json 失败，path: {jsonPath} launchJson:{launchJson}");
+                    return;
+                }
+            }
+
+            launch.configurations[0].pid = processId;
+
+            var json = JsonUtility.ToJson(launch, true);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                UnityEngine.Debug.LogError($"{nameof(Launch)}转换Json失败");
+                return;
+            }
+            File.WriteAllText(jsonPath, json);
+
+        }
+
+        #endregion
     }
 }
