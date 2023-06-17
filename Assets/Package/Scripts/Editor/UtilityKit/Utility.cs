@@ -170,7 +170,6 @@ namespace Cofdream.ToolKitEditor
         }
 
 
-
         public static string GetPackageRootPath()
         {
             if (System.IO.Directory.Exists("Packages/com.cofdream.toolkit"))
@@ -182,6 +181,5 @@ namespace Cofdream.ToolKitEditor
                 return "Assets/Package";
             }
         }
-
     }
 }

@@ -31,8 +31,8 @@ namespace Cofdream.ToolKitEditor
             }
         }
 
-
-        private string _singleRootPath;
+        [SerializeField]
+        private string _singleRootPath = Utility.GetPackageRootPath() + "/WorkToolData";
 
 
         [SerializeField] private ToolData _toolData;
@@ -48,11 +48,9 @@ namespace Cofdream.ToolKitEditor
 
         private void OnEnable()
         {
-            //path
-            _singleRootPath = "Assets/_A_WorkData";
             if (AssetDatabase.IsValidFolder(_singleRootPath) == false)
             {
-                AssetDatabase.CreateFolder("Assets", "_A_WorkData");
+                AssetDatabase.CreateFolder(Path.GetDirectoryName(_singleRootPath), Path.GetFileName(_singleRootPath));
                 AssetDatabase.ImportAsset(_singleRootPath);
             }
 
