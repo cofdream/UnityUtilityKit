@@ -41,8 +41,26 @@ namespace Cofdream.ToolKitEditor
                     }
                 }
             }
+        }
+    }
 
-            CustomAssetModificationProcessor.SaveAssetIfDirty(this);
+    [CustomEditor(typeof(ToolData))]
+    public class ToolDataInspector : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.Space();
+
+                if (GUILayout.Button("Apply", GUILayout.ExpandWidth(false)))
+                {
+                    CustomAssetModificationProcessor.SaveAssetIfDirty(target);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
         }
     }
 
